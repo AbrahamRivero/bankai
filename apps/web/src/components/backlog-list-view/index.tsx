@@ -330,7 +330,7 @@ function BacklogListView({
               )}
             />
             <div className="flex items-center gap-2 h-4">
-              <IconComponent className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
+              <IconComponent className="w-4 h-4 shrink-0 text-muted-foreground" />
               <div className="flex items-center gap-1">
                 <span className="mt-1 mr-1">
                   {t(`tasks:backlog.sections.${sectionId}`, {
@@ -428,9 +428,9 @@ function BacklogListView({
 
       <DragOverlay>
         {activeTask && (
-          <div className="bg-card border border-border rounded-lg shadow-lg p-2 max-w-[200px] cursor-grabbing">
+          <div className="bg-card border border-border rounded-lg shadow-lg p-2 max-w-50 cursor-grabbing">
             <div className="flex items-center gap-2">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Flag
                   className={cn(
                     "w-3 h-3",

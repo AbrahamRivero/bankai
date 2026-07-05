@@ -94,11 +94,12 @@ export const notificationSchema = v.object({
     "due_date_reminder",
     "task_overdue",
     "task_mention",
+    "order_status_changed",
   ] as const),
   eventData: v.nullable(v.record(v.string(), v.unknown())),
   isRead: v.optional(v.boolean()),
   resourceId: v.optional(v.string()),
-  resourceType: v.optional(v.picklist(["task", "workspace"] as const)),
+  resourceType: v.optional(v.picklist(["task", "workspace", "order"] as const)),
   createdAt: v.date(),
   updatedAt: v.date(),
 });

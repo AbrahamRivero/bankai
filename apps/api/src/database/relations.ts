@@ -6,13 +6,23 @@ import {
   assetTable,
   columnTable,
   commentTable,
+  currencyCacheTable,
   externalLinkTable,
   githubIntegrationTable,
   integrationTable,
   invitationTable,
   labelTable,
   notificationTable,
+  orderItemTable,
+  orderTable,
+  productFavoriteTable,
+  productImageTable,
+  productRelatedTable,
+  productTable,
   projectTable,
+  promotionProductTable,
+  promotionTable,
+  reviewTable,
   sessionTable,
   taskRelationTable,
   taskReminderSentTable,
@@ -47,6 +57,10 @@ export const userTableRelations = relations(userTable, ({ many, one }) => ({
   notificationWorkspaceRules: many(userNotificationWorkspaceRuleTable),
   sentInvitations: many(invitationTable),
   apikeys: many(apikeyTable),
+  products: many(productTable),
+  reviews: many(reviewTable),
+  orders: many(orderTable),
+  productFavorites: many(productFavoriteTable),
 }));
 
 export const sessionTableRelations = relations(sessionTable, ({ one }) => ({
@@ -392,3 +406,120 @@ export const commentTableRelations = relations(commentTable, ({ one }) => ({
     references: [userTable.id],
   }),
 }));
+
+// ─── Store / E-commerce Relations ─────────────────────────────────────────
+
+export const productTableRelations = relations(
+  productTable,
+  ({ one, many }) => ({
+    user: one(userTable, {
+      fields: [productTable.userId],
+      references: [userTable.id],
+    }),
+    images: many(productImageTable),
+    reviews: many(reviewTable),
+    favorites: many(productFavoriteTable),
+    relatedTo: many(productRelatedTable, { relationName: "sourceProduct" }),
+    relatedFrom: many(productRelatedTable, {
+      relationName: "targetProduct",
+    }),
+    orderItems: many(orderItemTable),
+    promotions: many(promotionProductTable),
+  }),
+);
+
+export const productImageTableRelations = relations(
+  productImageTable,
+  ({ one }) => ({
+    product: one(productTable, {
+      fields: [productImageTable.productId],
+      references: [productTable.id],
+    }),
+  }),
+);
+
+export const productFavoriteTableRelations = relations(
+  productFavoriteTable,
+  ({ one }) => ({
+    user: one(userTable, {
+      fields: [productFavoriteTable.userId],
+      references: [userTable.id],
+    }),
+    product: one(productTable, {
+      fields: [productFavoriteTable.productId],
+      references: [productTable.id],
+    }),
+  }),
+);
+
+export const productRelatedTableRelations = relations(
+  productRelatedTable,
+  ({ one }) => ({
+    sourceProduct: one(productTable, {
+      fields: [productRelatedTable.productId],
+      references: [productTable.id],
+      relationName: "sourceProduct",
+    }),
+    targetProduct: one(productTable, {
+      fields: [productRelatedTable.relatedProductId],
+      references: [productTable.id],
+      relationName: "targetProduct",
+    }),
+  }),
+);
+
+export const reviewTableRelations = relations(reviewTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [reviewTable.userId],
+    references: [userTable.id],
+  }),
+  product: one(productTable, {
+    fields: [reviewTable.productId],
+    references: [productTable.id],
+  }),
+}));
+
+export const orderTableRelations = relations(orderTable, ({ one, many }) => ({
+  user: one(userTable, {
+    fields: [orderTable.userId],
+    references: [userTable.id],
+  }),
+  orderItems: many(orderItemTable),
+}));
+
+export const orderItemTableRelations = relations(orderItemTable, ({ one }) => ({
+  order: one(orderTable, {
+    fields: [orderItemTable.orderId],
+    references: [orderTable.id],
+  }),
+  product: one(productTable, {
+    fields: [orderItemTable.productId],
+    references: [productTable.id],
+  }),
+}));
+
+export const promotionTableRelations = relations(
+  promotionTable,
+  ({ many }) => ({
+    products: many(promotionProductTable),
+  }),
+);
+
+export const promotionProductTableRelations = relations(
+  promotionProductTable,
+  ({ one }) => ({
+    promotion: one(promotionTable, {
+      fields: [promotionProductTable.promotionId],
+      references: [promotionTable.id],
+    }),
+    product: one(productTable, {
+      fields: [promotionProductTable.productId],
+      references: [productTable.id],
+    }),
+  }),
+);
+
+export const currencyCacheTableRelations = relations(
+  currencyCacheTable,
+  () => ({}),
+);

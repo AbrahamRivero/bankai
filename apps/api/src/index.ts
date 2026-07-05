@@ -20,12 +20,14 @@ import { auth } from "./auth";
 import column from "./column";
 import comment from "./comment";
 import config from "./config";
+import currencyRoute from "./currency";
 import db, { getDatabase, schema } from "./database";
 import { prepareDatabaseStartup } from "./database/prepare-database-startup";
 import { waitForDatabase } from "./database/wait-for-database";
 import discordIntegration from "./discord-integration";
 import { eventContext } from "./events";
 import externalLink from "./external-link";
+import filesRoute from "./files";
 import genericWebhookIntegration from "./generic-webhook-integration";
 import giteaIntegration, { handleGiteaWebhookRoute } from "./gitea-integration";
 import githubIntegration, {
@@ -39,12 +41,17 @@ import { migrateColumns } from "./migrations/column-migration";
 import notification from "./notification";
 import notificationPreferences from "./notification-preferences";
 import oauth from "./oauth";
+import orders from "./orders";
 import { initializePlugins } from "./plugins";
 import { migrateGitHubIntegration } from "./plugins/github/migration";
+import products from "./products";
 import project from "./project";
 import { getPublicProject } from "./project/controllers/get-public-project";
+import promotions from "./promotions";
+import reviews from "./reviews";
 import { initializeScheduler, shutdownScheduler } from "./scheduler";
 import search from "./search";
+import seedRoute from "./seed";
 import slackIntegration from "./slack-integration";
 import { getPrivateObject } from "./storage/s3";
 import task from "./task";
@@ -79,9 +86,11 @@ import workspace from "./workspace";
 import {
   addConnection,
   addUserConnection,
+  addWorkspaceConnection,
   initializeWebSocketAdapter,
   removeConnection,
   removeUserConnection,
+  removeWorkspaceConnection,
   shutdownWebSocketAdapter,
 } from "./ws";
 
@@ -540,6 +549,15 @@ export function createApp() {
   const invitationApi = api.route("/invitation", invitation);
   const workspaceApi = api.route("/workspace", workspace);
 
+  // Store / E-commerce routes
+  const productsApi = api.route("/products", products);
+  const ordersApi = api.route("/orders", orders);
+  const reviewsApi = api.route("/reviews", reviews);
+  const promotionsApi = api.route("/promotions", promotions);
+  const currencyApi = api.route("/currency", currencyRoute);
+  const filesApi = api.route("/files", filesRoute);
+  const seedApi = api.route("/seed", seedRoute);
+
   app.route(
     "/",
     mcpWellKnownRoutes(
@@ -672,6 +690,65 @@ export function createApp() {
     }),
   );
 
+  // Workspace-scoped WebSocket endpoint for store and other workspace features
+  api.get(
+    "/ws/workspace/:workspaceId",
+    upgradeWebSocket(async (c) => {
+      const workspaceId = c.req.param("workspaceId");
+
+      try {
+        await authenticateApiRequest(c);
+      } catch (error) {
+        if (error instanceof HTTPException) {
+          throw error;
+        }
+        console.error("API authentication failed:", error);
+        throw new HTTPException(500, { message: "Internal Server Error" });
+      }
+
+      const userId = c.get("userId");
+
+      if (workspaceId) {
+        await validateWorkspaceAccess(userId, workspaceId);
+      }
+
+      const windowId = c.req.query("windowId");
+      const initiatorId = windowId ? `${userId}:${windowId}` : userId;
+      let conn: ReturnType<typeof addWorkspaceConnection> | null = null;
+
+      return {
+        onOpen(_evt, ws) {
+          if (workspaceId) {
+            conn = addWorkspaceConnection(workspaceId, ws, userId, initiatorId);
+          }
+        },
+        onMessage(evt) {
+          try {
+            const raw =
+              typeof evt.data === "string"
+                ? evt.data
+                : Buffer.isBuffer(evt.data)
+                  ? evt.data.toString()
+                  : null;
+            if (raw) {
+              const msg = JSON.parse(raw) as { type?: string };
+              if (msg?.type === "ping") {
+                // keepalive — no-op
+              }
+            }
+          } catch {
+            // Ignore malformed messages
+          }
+        },
+        onClose() {
+          if (conn && workspaceId) {
+            removeWorkspaceConnection(workspaceId, conn);
+          }
+        },
+      };
+    }),
+  );
+
   app.route("/api", api);
 
   return {
@@ -703,6 +780,13 @@ export function createApp() {
     workflowRuleApi,
     workspaceApi,
     oauthApi,
+    productsApi,
+    ordersApi,
+    reviewsApi,
+    promotionsApi,
+    currencyApi,
+    filesApi,
+    seedApi,
   };
 }
 
@@ -819,6 +903,13 @@ const {
   workflowRuleApi,
   workspaceApi,
   oauthApi,
+  productsApi,
+  ordersApi,
+  reviewsApi,
+  promotionsApi,
+  currencyApi,
+  filesApi,
+  seedApi,
 } = createdApp;
 
 const isMainModule =
@@ -854,6 +945,13 @@ export type AppType =
   | typeof workspaceApi
   | typeof publicProjectApi
   | typeof invitationPublicApi
-  | typeof oauthApi;
+  | typeof oauthApi
+  | typeof productsApi
+  | typeof ordersApi
+  | typeof reviewsApi
+  | typeof promotionsApi
+  | typeof currencyApi
+  | typeof filesApi
+  | typeof seedApi;
 
 export default app;

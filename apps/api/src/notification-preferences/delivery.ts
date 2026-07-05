@@ -148,6 +148,18 @@ function buildDeliveryContent(notification: {
           : "A task is past its due date.",
       };
     }
+    case "order_status_changed": {
+      const orderNumber = getStringValue(notification.eventData, "orderNumber");
+      const oldStatus = getStringValue(notification.eventData, "oldStatus");
+      const newStatus = getStringValue(notification.eventData, "newStatus");
+      return {
+        title: "Order status updated",
+        body:
+          orderNumber && oldStatus && newStatus
+            ? `Order ${orderNumber} status changed from "${oldStatus}" to "${newStatus}".`
+            : "An order status was updated.",
+      };
+    }
     default:
       return {
         title: notification.title ?? "New Kaneo notification",

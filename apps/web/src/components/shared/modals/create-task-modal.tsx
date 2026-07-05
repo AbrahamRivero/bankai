@@ -591,7 +591,7 @@ function CreateTaskModal({
         className="kaneo-create-task-modal max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
         showCloseButton={false}
       >
-        <DialogHeader className="flex-shrink-0">
+        <DialogHeader className="shrink-0">
           <DialogTitle asChild>
             <Breadcrumb>
               <BreadcrumbList>
@@ -622,11 +622,11 @@ function CreateTaskModal({
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
               placeholder={t("common:modals.createTask.taskTitlePlaceholder")}
-              className="w-full [&_[data-slot=input]]:h-auto [&_[data-slot=input]]:px-0 [&_[data-slot=input]]:py-3 [&_[data-slot=input]]:text-2xl [&_[data-slot=input]]:leading-tight [&_[data-slot=input]]:font-semibold [&_[data-slot=input]]:tracking-tight [&_[data-slot=input]]:text-foreground [&_[data-slot=input]]:placeholder:text-muted-foreground [&_[data-slot=input]]:outline-none"
+              className="w-full **:data-[slot=input]:h-auto **:data-[slot=input]:px-0 **:data-[slot=input]:py-3 **:data-[slot=input]:text-2xl **:data-[slot=input]:leading-tight **:data-[slot=input]:font-semibold **:data-[slot=input]:tracking-tight **:data-[slot=input]:text-foreground **:data-[slot=input]:placeholder:text-muted-foreground **:data-[slot=input]:outline-none"
               required
             />
 
-            <div className="min-h-[200px]">
+            <div className="min-h-50">
               <TaskDescriptionEditor
                 value={description}
                 onChange={setDescription}
@@ -918,13 +918,13 @@ function CreateTaskModal({
                             className="w-full flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-accent/50 text-left"
                             onClick={() => toggleLabel(label.name)}
                           >
-                            <div className="flex-shrink-0 w-3 flex justify-center">
+                            <div className="shrink-0 w-3 flex justify-center">
                               {labels.some((l) => l.name === label.name) && (
                                 <Check className="w-3 h-3" />
                               )}
                             </div>
                             <span
-                              className="w-2 h-2 rounded-full flex-shrink-0"
+                              className="w-2 h-2 rounded-full shrink-0"
                               style={{
                                 backgroundColor:
                                   labelColors.find(
@@ -949,11 +949,11 @@ function CreateTaskModal({
                             className="w-full flex items-center gap-2 px-2 py-1.5 text-xs hover:bg-accent/50 text-left"
                             onClick={handleCreateNewClick}
                           >
-                            <div className="flex-shrink-0 w-3 flex justify-center">
+                            <div className="shrink-0 w-3 flex justify-center">
                               <Plus className="w-3 h-3" />
                             </div>
                             <span
-                              className="w-2 h-2 rounded-full flex-shrink-0"
+                              className="w-2 h-2 rounded-full shrink-0"
                               style={{
                                 backgroundColor:
                                   labelColors.find(
@@ -1000,7 +1000,7 @@ function CreateTaskModal({
                             }
                           >
                             <span
-                              className="w-2 h-2 rounded-full flex-shrink-0"
+                              className="w-2 h-2 rounded-full shrink-0"
                               style={{ backgroundColor: color.color }}
                             />
                             <span className="truncate">{color.label}</span>
@@ -1017,7 +1017,7 @@ function CreateTaskModal({
             </div>
           </div>
 
-          <DialogFooter className="flex-shrink-0 border-t border-border bg-background px-6 py-4">
+          <DialogFooter className="shrink-0 border-t border-border bg-background px-6 py-4">
             <div className="flex items-center gap-3 mr-auto">
               <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
                 <input

@@ -12,6 +12,10 @@ export const statement = {
   task: ["create", "read", "update", "delete", "assign"],
   label: ["create", "read", "update", "delete"],
   workspace: ["read", "update", "delete", "manage_settings"],
+  product: ["create", "read", "update", "delete"],
+  order: ["create", "read", "update", "delete"],
+  promotion: ["create", "read", "update", "delete"],
+  review: ["create", "read", "update", "delete"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -22,6 +26,10 @@ export const viewer = ac.newRole({
   task: ["read"],
   label: ["read"],
   workspace: ["read"],
+  product: ["read"],
+  order: ["read"],
+  promotion: ["read"],
+  review: ["read"],
 });
 
 export const member = ac.newRole({
@@ -30,6 +38,10 @@ export const member = ac.newRole({
   task: ["create", "read", "update"],
   label: ["create", "read", "update", "delete"],
   workspace: ["read"],
+  product: ["read"],
+  order: ["read", "create", "update"],
+  promotion: ["read"],
+  review: ["create", "read", "update"],
 });
 
 export const admin = ac.newRole({
@@ -38,6 +50,10 @@ export const admin = ac.newRole({
   task: ["create", "read", "update", "delete", "assign"],
   label: ["create", "read", "update", "delete"],
   workspace: ["read", "update", "manage_settings"],
+  product: ["create", "read", "update", "delete"],
+  order: ["create", "read", "update", "delete"],
+  promotion: ["create", "read", "update", "delete"],
+  review: ["create", "read", "update", "delete"],
 });
 
 export const owner = ac.newRole({
@@ -46,6 +62,10 @@ export const owner = ac.newRole({
   task: ["create", "read", "update", "delete", "assign"],
   label: ["create", "read", "update", "delete"],
   workspace: ["read", "update", "delete", "manage_settings"],
+  product: ["create", "read", "update", "delete"],
+  order: ["create", "read", "update", "delete"],
+  promotion: ["create", "read", "update", "delete"],
+  review: ["create", "read", "update", "delete"],
 });
 
 export const builtInRoles = { viewer, member, admin, owner } as const;

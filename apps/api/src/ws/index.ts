@@ -9,6 +9,12 @@ import type {
 import { InMemoryBroadcastAdapter } from "./in-memory-broadcast-adapter";
 import { RedisBroadcastAdapter } from "./redis-broadcast-adapter";
 
+type WorkspaceConnection = {
+  ws: WSContext;
+  userId: string;
+  initiatorId: string;
+};
+
 type ProjectConnection = {
   ws: WSContext;
   userId: string;
@@ -67,6 +73,57 @@ export function broadcastToUser(
 /**
  * Local connections — Each instance tracks only its own WebSocket connections.
  */
+const workspaceConnections = new Map<string, Set<WorkspaceConnection>>();
+
+export function addWorkspaceConnection(
+  workspaceId: string,
+  ws: WSContext,
+  userId: string,
+  initiatorId: string,
+) {
+  if (!workspaceConnections.has(workspaceId)) {
+    workspaceConnections.set(workspaceId, new Set());
+  }
+  const conn: WorkspaceConnection = { ws, userId, initiatorId };
+  workspaceConnections.get(workspaceId)?.add(conn);
+  return conn;
+}
+
+export function removeWorkspaceConnection(
+  workspaceId: string,
+  conn: WorkspaceConnection,
+) {
+  const connections = workspaceConnections.get(workspaceId);
+  if (connections) {
+    connections.delete(conn);
+    if (connections.size === 0) {
+      workspaceConnections.delete(workspaceId);
+    }
+  }
+}
+
+export function broadcastToWorkspace(
+  workspaceId: string,
+  message: { type: string; [key: string]: unknown },
+  excludeInitiatorId?: string,
+) {
+  const connections = workspaceConnections.get(workspaceId);
+  if (!connections) return;
+
+  const payload = JSON.stringify(message);
+  for (const conn of connections) {
+    if (excludeInitiatorId && conn.initiatorId === excludeInitiatorId) continue;
+    try {
+      conn.ws.send(payload);
+    } catch {
+      connections.delete(conn);
+    }
+  }
+  if (connections.size === 0) {
+    workspaceConnections.delete(workspaceId);
+  }
+}
+
 const projectConnections = new Map<string, Set<ProjectConnection>>();
 
 /**
@@ -318,6 +375,44 @@ subscribeToEvent<{ notificationId: string; userId: string }>(
     }
   },
 );
+
+// ─── Store Event Subscriptions ─────────────────────────────────────────
+
+const storeUpdateEvents: Array<{
+  eventName: string;
+  messageType: string;
+}> = [
+  { eventName: "product.created", messageType: "PRODUCT_UPDATED" },
+  { eventName: "product.updated", messageType: "PRODUCT_UPDATED" },
+  { eventName: "product.deleted", messageType: "PRODUCT_UPDATED" },
+  { eventName: "product.favorited", messageType: "PRODUCT_UPDATED" },
+  { eventName: "product.unfavorited", messageType: "PRODUCT_UPDATED" },
+  { eventName: "order.created", messageType: "ORDER_UPDATED" },
+  { eventName: "order.updated", messageType: "ORDER_UPDATED" },
+  { eventName: "order.deleted", messageType: "ORDER_UPDATED" },
+  { eventName: "promotion.created", messageType: "PROMOTION_UPDATED" },
+  { eventName: "promotion.updated", messageType: "PROMOTION_UPDATED" },
+  { eventName: "promotion.deleted", messageType: "PROMOTION_UPDATED" },
+  { eventName: "review.created", messageType: "REVIEW_UPDATED" },
+  { eventName: "review.updated", messageType: "REVIEW_UPDATED" },
+  { eventName: "review.deleted", messageType: "REVIEW_UPDATED" },
+];
+
+for (const { eventName, messageType } of storeUpdateEvents) {
+  subscribeToEvent<{
+    workspaceId?: string;
+    initiatorId?: string;
+  }>(eventName, async (data) => {
+    const { workspaceId, initiatorId } = data;
+    if (!workspaceId) return;
+
+    broadcastToWorkspace(
+      workspaceId,
+      { type: messageType, workspaceId },
+      initiatorId,
+    );
+  });
+}
 
 for (const eventName of taskUpdateEvents) {
   subscribeToEvent<TaskEvent>(eventName, async (data) => {

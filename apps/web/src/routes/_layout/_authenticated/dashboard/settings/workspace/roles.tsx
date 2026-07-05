@@ -68,6 +68,10 @@ const RESOURCE_LABELS: Record<string, string> = {
   task: "Tasks",
   label: "Labels",
   workspace: "Workspace",
+  product: "Products",
+  order: "Orders",
+  promotion: "Promotions",
+  review: "Reviews",
 };
 
 function resourceLabel(resource: string): string {
@@ -153,6 +157,70 @@ const PERMISSION_LABELS: Record<
     label: "Manage settings",
     description:
       "Configure integrations, notification rules, and workspace preferences.",
+  },
+  "product:create": {
+    label: "Create products",
+    description: "Add new products to the store.",
+  },
+  "product:read": {
+    label: "View products",
+    description: "View products and their details.",
+  },
+  "product:update": {
+    label: "Edit products",
+    description: "Update product name, price, stock, and details.",
+  },
+  "product:delete": {
+    label: "Delete products",
+    description: "Permanently delete products from the store.",
+  },
+  "order:create": {
+    label: "Create orders",
+    description: "Create new orders in the store.",
+  },
+  "order:read": {
+    label: "View orders",
+    description: "View orders and their details.",
+  },
+  "order:update": {
+    label: "Edit orders",
+    description: "Update order status, items, and details.",
+  },
+  "order:delete": {
+    label: "Delete orders",
+    description: "Permanently delete orders from the store.",
+  },
+  "promotion:create": {
+    label: "Create promotions",
+    description: "Create new promotions and discount codes.",
+  },
+  "promotion:read": {
+    label: "View promotions",
+    description: "View promotions and their details.",
+  },
+  "promotion:update": {
+    label: "Edit promotions",
+    description: "Update promotion rules, discounts, and validity.",
+  },
+  "promotion:delete": {
+    label: "Delete promotions",
+    description: "Permanently delete promotions from the store.",
+  },
+  "review:create": {
+    label: "Create reviews",
+    description: "Write reviews for products.",
+  },
+  "review:read": {
+    label: "View reviews",
+    description: "View product reviews and ratings.",
+  },
+  "review:update": {
+    label: "Edit reviews",
+    description: "Update review content and ratings.",
+  },
+  "review:delete": {
+    label: "Delete reviews",
+    description: "Permanently delete reviews.",
   },
 };
 
@@ -306,7 +374,7 @@ function RouteComponent() {
               </Empty>
             ) : (
               <Accordion
-                openMultiple
+                multiple
                 value={openCustom}
                 onValueChange={(value) =>
                   setOpenCustom(Array.isArray(value) ? value : [value])
@@ -440,7 +508,9 @@ function PermissionList({
     () =>
       CUSTOM_RESOURCES.map((resource) => ({
         resource,
-        actions: [...(statement[resource] ?? [])] as string[],
+        actions: [
+          ...(statement[resource as keyof typeof statement] ?? []),
+        ] as string[],
       })),
     [],
   );

@@ -2,11 +2,13 @@ import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  doublePrecision,
   foreignKey,
   index,
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   unique,
@@ -916,6 +918,255 @@ export const deviceCodeTable = pgTable(
     index("device_code_user_id_idx").on(table.userId),
   ],
 );
+
+// ─── Store / E-commerce Tables ───────────────────────────────────────────────
+
+export const productTable = pgTable(
+  "product",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    title: text("title").notNull().unique(),
+    price: doublePrecision("price").default(0).notNull(),
+    description: text("description"),
+    slug: text("slug").notNull().unique(),
+    stock: integer("stock").default(0).notNull(),
+    sizes: text("sizes").array().notNull(),
+    gender: text("gender").notNull(),
+    tags: text("tags").array().notNull().default([]),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "set null" }),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspaceTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("product_slug_idx").on(table.slug),
+    index("product_gender_idx").on(table.gender),
+    index("product_userId_idx").on(table.userId),
+    index("product_workspaceId_idx").on(table.workspaceId),
+  ],
+);
+
+export const productImageTable = pgTable(
+  "product_image",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    url: text("url").notNull(),
+    productId: text("product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "cascade" }),
+  },
+  (table) => [index("product_image_productId_idx").on(table.productId)],
+);
+
+export const productFavoriteTable = pgTable(
+  "product_favorite",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("product_favorite_userId_idx").on(table.userId),
+    index("product_favorite_productId_idx").on(table.productId),
+    unique("product_favorite_user_product_unique").on(
+      table.userId,
+      table.productId,
+    ),
+  ],
+);
+
+export const productRelatedTable = pgTable(
+  "product_related",
+  {
+    productId: text("product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "cascade" }),
+    relatedProductId: text("related_product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.productId, table.relatedProductId] }),
+    index("product_related_productId_idx").on(table.productId),
+    index("product_related_relatedProductId_idx").on(table.relatedProductId),
+  ],
+);
+
+export const reviewTable = pgTable(
+  "review",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    comment: text("comment").notNull(),
+    rating: integer("rating").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("review_userId_idx").on(table.userId),
+    index("review_productId_idx").on(table.productId),
+  ],
+);
+
+export const orderTable = pgTable(
+  "order",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    shippingAddress: text("shipping_address").notNull(),
+    phone: text("phone"),
+    city: text("city").notNull(),
+    province: text("province").notNull(),
+    discount: doublePrecision("discount").default(0).notNull(),
+    paymentMethod: text("payment_method").default("cup").notNull(),
+    orderStatus: text("order_status").default("pending").notNull(),
+    orderNumber: text("order_number").notNull().unique(),
+    trackingNumber: text("tracking_number").notNull().unique(),
+    subtotal: doublePrecision("subtotal").default(0).notNull(),
+    shipping: doublePrecision("shipping").default(0).notNull(),
+    total: doublePrecision("total").default(0).notNull(),
+    notes: text("notes"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "set null" }),
+    customerId: text("customer_id").references(() => userTable.id, {
+      onDelete: "set null",
+    }),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspaceTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("order_userId_idx").on(table.userId),
+    index("order_customerId_idx").on(table.customerId),
+    index("order_orderNumber_idx").on(table.orderNumber),
+    index("order_orderStatus_idx").on(table.orderStatus),
+    index("order_createdAt_idx").on(table.createdAt),
+    index("order_workspaceId_idx").on(table.workspaceId),
+  ],
+);
+
+export const orderItemTable = pgTable(
+  "order_item",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orderTable.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "set null" }),
+    quantity: integer("quantity").notNull(),
+    size: text("size"),
+  },
+  (table) => [
+    index("order_item_orderId_idx").on(table.orderId),
+    index("order_item_productId_idx").on(table.productId),
+  ],
+);
+
+export const promotionTable = pgTable(
+  "promotion",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    title: text("title").notNull(),
+    description: text("description"),
+    type: text("type").notNull().default("percentage"),
+    value: doublePrecision("value").notNull().default(0),
+    startDate: timestamp("start_date", { mode: "date" }).notNull(),
+    endDate: timestamp("end_date", { mode: "date" }).notNull(),
+    code: text("code").notNull().unique(),
+    minimumPurchaseAmount: doublePrecision("minimum_purchase_amount"),
+    maxUses: integer("max_uses"),
+    usesPerUser: integer("uses_per_user"),
+    currentUses: integer("current_uses").default(0).notNull(),
+    priority: integer("priority").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    isCombinable: boolean("is_combinable").default(false).notNull(),
+    conditions: jsonb("conditions").$type<Record<string, unknown>>(),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspaceTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("promotion_code_idx").on(table.code),
+    index("promotion_type_idx").on(table.type),
+    index("promotion_active_dates_idx").on(table.startDate, table.endDate),
+    index("promotion_workspaceId_idx").on(table.workspaceId),
+  ],
+);
+
+export const promotionProductTable = pgTable(
+  "promotion_product",
+  {
+    promotionId: text("promotion_id")
+      .notNull()
+      .references(() => promotionTable.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => productTable.id, { onDelete: "cascade" }),
+    quantity: integer("quantity").notNull().default(1),
+  },
+  (table) => [
+    primaryKey({ columns: [table.promotionId, table.productId] }),
+    index("promotion_product_promotionId_idx").on(table.promotionId),
+    index("promotion_product_productId_idx").on(table.productId),
+  ],
+);
+
+export const currencyCacheTable = pgTable("currency_cache", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  currencyCode: text("currency_code").notNull(),
+  rate: doublePrecision("rate").notNull(),
+  provider: text("provider").notNull(),
+  lastUpdated: timestamp("last_updated", { mode: "date" }).notNull(),
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+});
 
 // Auth-schema compatible aliases in schema.ts
 export const user = userTable;

@@ -1,5 +1,5 @@
 import { DEFAULT_ROLE_NAMES, defaultRolePayloads } from "@kaneo/permissions";
-import { and, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import db, { schema } from "../database";
 
 /**
@@ -14,7 +14,12 @@ import db, { schema } from "../database";
  * better-auth's dynamic-access-control resolution would treat them as
  * having an empty permission set on existing workspaces.
  *
- * Idempotent: only inserts rows that aren't already present.
+ * Also merges new resources into existing role payloads so that when a
+ * new resource (e.g. `store`) is added to the built-in roles, every
+ * workspace picks it up automatically without losing custom edits.
+ *
+ * Idempotent: only inserts rows that aren't already present, and only
+ * merges resources that are missing from existing payloads.
  */
 export async function seedDefaultWorkspaceRoles() {
   try {
@@ -50,6 +55,7 @@ export async function seedDefaultWorkspaceRoles() {
       .select({
         workspaceId: schema.workspaceRoleTable.workspaceId,
         role: schema.workspaceRoleTable.role,
+        permission: schema.workspaceRoleTable.permission,
       })
       .from(schema.workspaceRoleTable)
       .where(
@@ -81,22 +87,97 @@ export async function seedDefaultWorkspaceRoles() {
       }
     }
 
-    if (rows.length === 0) {
-      return;
+    if (rows.length > 0) {
+      // Postgres' bind protocol caps parameters at 65535 per query, so insert
+      // in chunks. 6 columns × 1000 rows = 6000 params per batch, leaving ample
+      // headroom even for instances with tens of thousands of workspaces.
+      const BATCH_SIZE = 1000;
+      for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+        await db
+          .insert(schema.workspaceRoleTable)
+          .values(rows.slice(i, i + BATCH_SIZE));
+      }
+      console.log(
+        `✅ Seeded ${rows.length} default workspace role row(s) across ${workspaceIds.length} workspace(s).`,
+      );
     }
 
-    // Postgres' bind protocol caps parameters at 65535 per query, so insert
-    // in chunks. 6 columns × 1000 rows = 6000 params per batch, leaving ample
-    // headroom even for instances with tens of thousands of workspaces.
-    const BATCH_SIZE = 1000;
-    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
-      await db
-        .insert(schema.workspaceRoleTable)
-        .values(rows.slice(i, i + BATCH_SIZE));
+    // Merge new resources into existing role payloads. When a new resource
+    // (e.g. `store`) is added to defaultRolePayloads, existing workspace_role
+    // rows won't have it yet. This merges the missing resource without
+    // overwriting any custom permissions the admin may have set.
+    const updates: Array<{
+      workspaceId: string;
+      role: string;
+      permission: string;
+    }> = [];
+
+    for (const row of existingRows) {
+      const roleName = row.role as (typeof DEFAULT_ROLE_NAMES)[number];
+      const defaultPayload = defaultRolePayloads[roleName];
+      if (!defaultPayload) continue;
+
+      let current: Record<string, string[]>;
+      try {
+        current =
+          typeof row.permission === "string"
+            ? JSON.parse(row.permission)
+            : (row.permission as Record<string, string[]>);
+      } catch {
+        continue;
+      }
+
+      let changed = false;
+      const merged = { ...current };
+      for (const [resource, actions] of Object.entries(defaultPayload)) {
+        if (!merged[resource]) {
+          merged[resource] = actions;
+          changed = true;
+        }
+      }
+
+      // Remove resources that are no longer in defaultRolePayloads
+      for (const resource of Object.keys(merged)) {
+        if (!(resource in defaultPayload)) {
+          delete merged[resource];
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        updates.push({
+          workspaceId: row.workspaceId,
+          role: roleName,
+          permission: JSON.stringify(merged),
+        });
+      }
     }
-    console.log(
-      `✅ Seeded ${rows.length} default workspace role row(s) across ${workspaceIds.length} workspace(s).`,
-    );
+
+    if (updates.length > 0) {
+      const BATCH_SIZE = 1000;
+      for (let i = 0; i < updates.length; i += BATCH_SIZE) {
+        const batch = updates.slice(i, i + BATCH_SIZE);
+        await Promise.all(
+          batch.map((u) =>
+            db
+              .update(schema.workspaceRoleTable)
+              .set({
+                permission: u.permission,
+                updatedAt: new Date(),
+              })
+              .where(
+                and(
+                  eq(schema.workspaceRoleTable.workspaceId, u.workspaceId),
+                  eq(schema.workspaceRoleTable.role, u.role),
+                ),
+              ),
+          ),
+        );
+      }
+      console.log(
+        `✅ Merged new resources into ${updates.length} existing default role(s).`,
+      );
+    }
   } catch (error) {
     console.error("❌ Failed to seed default workspace roles:", error);
     throw error;

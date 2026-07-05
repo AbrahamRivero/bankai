@@ -25,6 +25,18 @@ const CAPABILITIES = {
   inviteUsers: { invitation: ["create"] },
   manageTeam: { member: ["update", "delete"] },
   removeMembers: { member: ["delete"] },
+  createProducts: { product: ["create"] },
+  updateProducts: { product: ["update"] },
+  deleteProducts: { product: ["delete"] },
+  createOrders: { order: ["create"] },
+  updateOrders: { order: ["update"] },
+  deleteOrders: { order: ["delete"] },
+  createPromotions: { promotion: ["create"] },
+  updatePromotions: { promotion: ["update"] },
+  deletePromotions: { promotion: ["delete"] },
+  createReviews: { review: ["create"] },
+  updateReviews: { review: ["update"] },
+  deleteReviews: { review: ["delete"] },
 } as const satisfies Record<string, Record<string, string[]>>;
 
 type Capability = keyof typeof CAPABILITIES;
@@ -99,6 +111,18 @@ export function useWorkspacePermission() {
       canInviteUsers: () => can.inviteUsers,
       canManageTeam: () => can.manageTeam,
       canRemoveMembers: () => can.removeMembers,
+      canCreateProducts: () => can.createProducts,
+      canUpdateProducts: () => can.updateProducts,
+      canDeleteProducts: () => can.deleteProducts,
+      canCreateOrders: () => can.createOrders,
+      canUpdateOrders: () => can.updateOrders,
+      canDeleteOrders: () => can.deleteOrders,
+      canCreatePromotions: () => can.createPromotions,
+      canUpdatePromotions: () => can.updatePromotions,
+      canDeletePromotions: () => can.deletePromotions,
+      canCreateReviews: () => can.createReviews,
+      canUpdateReviews: () => can.updateReviews,
+      canDeleteReviews: () => can.deleteReviews,
       // Escape hatch for ad-hoc permission checks (uncached). Prefer adding
       // a capability above.
       hasPermission: async (permissions: Record<string, string[]>) => {
