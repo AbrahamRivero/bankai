@@ -1,4 +1,4 @@
-import { and, eq, gte, inArray, lte } from "drizzle-orm";
+import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import db from "../../database";
 import { orderItemTable, orderTable } from "../../database/schema";
 
@@ -119,10 +119,42 @@ async function getPeriodStats(
   };
 }
 
+type OrderStatusCount = {
+  status: string;
+  count: number;
+};
+
+async function getOrderStatusBreakdown(
+  start: Date,
+  end: Date,
+  workspaceId?: string,
+): Promise<OrderStatusCount[]> {
+  const conditions: ReturnType<typeof eq>[] = [
+    gte(orderTable.createdAt, start),
+    lte(orderTable.createdAt, end),
+  ];
+  if (workspaceId) conditions.push(eq(orderTable.workspaceId, workspaceId));
+
+  const rows = await db
+    .select({
+      status: orderTable.orderStatus,
+      count: sql<number>`count(*)`,
+    })
+    .from(orderTable)
+    .where(and(...conditions))
+    .groupBy(orderTable.orderStatus);
+
+  return rows.map((r) => ({
+    status: r.status,
+    count: Number(r.count),
+  }));
+}
+
 export type DashboardSummary = {
   currentPeriod: PeriodStats;
   comparisonPeriod: PeriodStats;
   percentageChanges: Record<string, number>;
+  currentOrdersByStatus: OrderStatusCount[];
 };
 
 async function getDashboardSummary(
@@ -137,10 +169,12 @@ async function getDashboardSummary(
     endDate,
   );
 
-  const [currentStats, comparisonStats] = await Promise.all([
-    getPeriodStats(current.start, current.end, workspaceId),
-    getPeriodStats(comparison.start, comparison.end, workspaceId),
-  ]);
+  const [currentStats, comparisonStats, currentOrdersByStatus] =
+    await Promise.all([
+      getPeriodStats(current.start, current.end, workspaceId),
+      getPeriodStats(comparison.start, comparison.end, workspaceId),
+      getOrderStatusBreakdown(current.start, current.end, workspaceId),
+    ]);
 
   return {
     currentPeriod: currentStats,
@@ -167,6 +201,7 @@ async function getDashboardSummary(
         comparisonStats.uniqueUsers,
       ),
     },
+    currentOrdersByStatus,
   };
 }
 

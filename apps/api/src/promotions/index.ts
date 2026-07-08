@@ -7,13 +7,17 @@ import createPromotion from "./controllers/create-promotion";
 import deletePromotion from "./controllers/delete-promotion";
 import getPromotionProducts from "./controllers/get-promotion-products";
 import getPromotions from "./controllers/get-promotions";
+import getPromotionsInsights from "./controllers/get-promotions-insights";
 import updatePromotion from "./controllers/update-promotion";
+import validatePromotion from "./controllers/validate-promotion";
 import {
   createPromotionSchema,
   paginationSchema,
   promotionListResponseSchema,
   promotionResponseSchema,
+  promotionValidationResponseSchema,
   updatePromotionSchema,
+  validatePromotionSchema,
 } from "./schemas";
 
 const promotions = new Hono<{ Variables: { userId: string } }>()
@@ -68,6 +72,49 @@ const promotions = new Hono<{ Variables: { userId: string } }>()
         offset: query.offset ? Number(query.offset) : 0,
         workspaceId: query.workspaceId,
       });
+      return c.json(result);
+    },
+  )
+  .get(
+    "/insights",
+    describeRoute({
+      operationId: "getPromotionsInsights",
+      tags: ["Store"],
+      description: "Get promotions insights for the dashboard",
+      responses: { 200: { description: "Promotions insights" } },
+    }),
+    workspaceAccess.fromQuery("workspaceId"),
+    requireWorkspacePermission({ promotion: ["read"] }),
+    validator("query", v.object({ workspaceId: v.string() })),
+    async (c) => {
+      const { workspaceId } = c.req.valid("query");
+      const insights = await getPromotionsInsights(workspaceId);
+      return c.json(insights);
+    },
+  )
+  .post(
+    "/validate",
+    describeRoute({
+      operationId: "validatePromotion",
+      tags: ["Store"],
+      description: "Validate a promotion code and calculate discount",
+      responses: {
+        200: {
+          description: "Promotion validation result",
+          content: {
+            "application/json": {
+              schema: resolver(promotionValidationResponseSchema),
+            },
+          },
+        },
+      },
+    }),
+    workspaceAccess.fromBody(),
+    requireWorkspacePermission({ promotion: ["read"] }),
+    validator("json", validatePromotionSchema),
+    async (c) => {
+      const input = c.req.valid("json");
+      const result = await validatePromotion(input);
       return c.json(result);
     },
   )

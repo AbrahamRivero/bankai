@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { describeRoute, resolver } from "hono-openapi";
 import * as v from "valibot";
 import { requireWorkspacePermission } from "../utils/require-workspace-permission";
-import { workspaceAccess } from "../utils/workspace-access-middleware";
+import { workspaceAccessMiddleware } from "../utils/workspace-access-middleware";
 import uploadProductImage from "./controllers/upload-product-image";
 
 const files = new Hono<{ Variables: { userId: string } }>().post(
@@ -24,7 +24,12 @@ const files = new Hono<{ Variables: { userId: string } }>().post(
       },
     },
   }),
-  workspaceAccess.fromBody(),
+  workspaceAccessMiddleware({
+    sources: [
+      { type: "query", key: "workspaceId" },
+      { type: "body", key: "workspaceId" },
+    ],
+  }),
   requireWorkspacePermission({ product: ["create"] }),
   async (c) => {
     const body = await c.req.parseBody();

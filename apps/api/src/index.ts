@@ -951,6 +951,7 @@ export type AppType =
   | typeof reviewsApi
   | typeof promotionsApi
   | typeof currencyApi
+  | typeof customersApi
   | typeof filesApi
   | typeof seedApi;
 

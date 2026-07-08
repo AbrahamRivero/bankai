@@ -1,10 +1,8 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
-import { validate as isUUID } from "uuid";
 import db from "../../database";
 import {
   productFavoriteTable,
   productImageTable,
-  productRelatedTable,
   productTable,
 } from "../../database/schema";
 
@@ -114,7 +112,7 @@ async function getProducts(options: GetProductsOptions) {
     .select({ count: sql<number>`count(*)` })
     .from(productTable)
     .where(where)
-    .then((r) => Number(r[0].count));
+    .then((r) => Number(r?.[0]?.count ?? 0));
 
   const productIds = products.map((p) => p.id);
 

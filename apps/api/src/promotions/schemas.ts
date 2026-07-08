@@ -59,3 +59,26 @@ export const createPromotionSchema = v.object({
 });
 
 export const updatePromotionSchema = v.partial(createPromotionSchema);
+
+export const validatePromotionItemSchema = v.object({
+  productId: v.string(),
+  quantity: v.number(),
+});
+
+export const validatePromotionSchema = v.object({
+  workspaceId: v.string(),
+  code: v.pipe(v.string(), v.minLength(1)),
+  subtotal: v.number(),
+  shipping: v.number(),
+  items: v.array(validatePromotionItemSchema),
+});
+
+export const promotionValidationResponseSchema = v.object({
+  valid: v.boolean(),
+  discount: v.number(),
+  type: v.string(),
+  value: v.number(),
+  promotionId: v.string(),
+  title: v.string(),
+  message: v.optional(v.string()),
+});

@@ -1852,6 +1852,7 @@
 			"products": "Products",
 			"orders": "Orders",
 			"promotions": "Promotions",
+			"reviews": "Reviews",
 			"customers": "Customers"
 		},
 		"order": {
@@ -1917,7 +1918,45 @@
 			"productsSold": "Products Sold",
 			"uniqueCustomers": "Unique Customers",
 			"vsPreviousPeriod": "vs previous period",
-			"viewAllOrders": "View All Orders"
+			"viewAllOrders": "View All Orders",
+			"products": {
+				"totalProducts": "Total Products",
+				"lowStock": "Low Stock",
+				"lowStockDescription": "≤5 units",
+				"outOfStock": "Out of Stock",
+				"averagePrice": "Avg. Price",
+				"topFavorited": "Most Favorited",
+				"byGender": "Products by Gender"
+			},
+			"orders": {
+				"byStatus": "Orders by Status",
+				"pending": "Pending",
+				"confirmed": "Confirmed",
+				"shipped": "Shipped",
+				"completed": "Completed",
+				"cancelled": "Cancelled"
+			},
+			"promotions": {
+				"active": "Active Promotions",
+				"totalPromotions": "Total Promotions",
+				"totalUses": "Total Uses",
+				"expiringSoon": "Expiring Soon",
+				"byType": "Promotions by Type"
+			},
+			"reviews": {
+				"totalReviews": "Total Reviews",
+				"averageRating": "Avg. Rating",
+				"withoutReviews": "Without Reviews",
+				"ratingDistribution": "Rating Distribution",
+				"stars": "{{count}} stars"
+			},
+			"customers": {
+				"totalCustomers": "Total Customers",
+				"newCustomers": "New Customers",
+				"repeatRate": "Repeat Rate",
+				"topBuyers": "Top Buyers",
+				"byProvince": "Customers by Province"
+			}
 		},
 		"common": {
 			"noProducts": "No products yet",
@@ -1954,6 +1993,12 @@
 			"unbanDialogDescription": "Это разблокирует {{name}}. Он снова сможет войти и получить доступ к рабочим пространствам.",
 			"removeDialogTitle": "Удалить клиента?",
 			"removeDialogDescription": "{{name}} будет удалён из этого рабочего пространства. Он больше не будет иметь доступа к магазину.",
+			"promoteToMember": "Повысить до Участника",
+			"promoteToAdmin": "Повысить до Админа",
+			"promoteSuccess": "Клиент успешно повышен",
+			"promoteError": "Ошибка при повышении клиента",
+			"promoteDialogTitle": "Повысить клиента?",
+			"promoteDialogDescription": "Это повысит {{name}} до {{role}}. Он получит дополнительные разрешения в этом рабочем пространстве.",
 			"emptyTitle": "Пока нет клиентов",
 			"emptyDescription": "Клиенты — это участники рабочего пространства с ролью Наблюдатель."
 		},
@@ -2036,6 +2081,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active on creation",
 				"createButton": "Create Promotion",
@@ -2083,6 +2129,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active",
 				"saveButton": "Save Changes",
@@ -2125,7 +2172,10 @@
 				"unknownProduct": "Товар",
 				"selectCustomer": "Выберите клиента...",
 				"unknownCustomer": "Клиент",
-				"noCustomers": "Клиенты не найдены"
+				"noCustomers": "Клиенты не найдены",
+				"promoCodePlaceholder": "Promo code",
+				"applyPromo": "Apply",
+				"promotionApplied": "Promotion"
 			}
 		}
 	}

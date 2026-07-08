@@ -5,6 +5,7 @@ import { userTable, workspaceUserTable } from "../../database/schema";
 async function getWorkspaceMembers(workspaceId: string) {
   const members = await db
     .select({
+      memberId: workspaceUserTable.id,
       id: userTable.id,
       name: userTable.name,
       email: userTable.email,

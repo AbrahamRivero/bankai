@@ -1809,6 +1809,7 @@
 			"products": "Products",
 			"orders": "Orders",
 			"promotions": "Promotions",
+			"reviews": "Reviews",
 			"customers": "Customers"
 		},
 		"order": {
@@ -1874,7 +1875,45 @@
 			"productsSold": "Products Sold",
 			"uniqueCustomers": "Unique Customers",
 			"vsPreviousPeriod": "vs previous period",
-			"viewAllOrders": "View All Orders"
+			"viewAllOrders": "View All Orders",
+			"products": {
+				"totalProducts": "Total Products",
+				"lowStock": "Low Stock",
+				"lowStockDescription": "≤5 units",
+				"outOfStock": "Out of Stock",
+				"averagePrice": "Avg. Price",
+				"topFavorited": "Most Favorited",
+				"byGender": "Products by Gender"
+			},
+			"orders": {
+				"byStatus": "Orders by Status",
+				"pending": "Pending",
+				"confirmed": "Confirmed",
+				"shipped": "Shipped",
+				"completed": "Completed",
+				"cancelled": "Cancelled"
+			},
+			"promotions": {
+				"active": "Active Promotions",
+				"totalPromotions": "Total Promotions",
+				"totalUses": "Total Uses",
+				"expiringSoon": "Expiring Soon",
+				"byType": "Promotions by Type"
+			},
+			"reviews": {
+				"totalReviews": "Total Reviews",
+				"averageRating": "Avg. Rating",
+				"withoutReviews": "Without Reviews",
+				"ratingDistribution": "Rating Distribution",
+				"stars": "{{count}} stars"
+			},
+			"customers": {
+				"totalCustomers": "Total Customers",
+				"newCustomers": "New Customers",
+				"repeatRate": "Repeat Rate",
+				"topBuyers": "Top Buyers",
+				"byProvince": "Customers by Province"
+			}
 		},
 		"common": {
 			"noProducts": "No products yet",
@@ -1911,6 +1950,12 @@
 			"unbanDialogDescription": "Ова ќе го отблокира {{name}}. Тој повторно ќе може да се најави и да пристапи до работни простори.",
 			"removeDialogTitle": "Да се отстрани клиентот?",
 			"removeDialogDescription": "{{name}} ќе биде отстранет од овој работен простор. Повеќе нема да има пристап до продавницата.",
+			"promoteToMember": "Промови во Член",
+			"promoteToAdmin": "Промови во Админ",
+			"promoteSuccess": "Клиентот е успешно промовиран",
+			"promoteError": "Неуспешна промоција на клиент",
+			"promoteDialogTitle": "Промовиј Клиент?",
+			"promoteDialogDescription": "Ова ќе го промовира {{name}} во {{role}}. Тие ќе имаат дополнителни дозволи во ова работно место.",
 			"emptyTitle": "Сè уште нема клиенти",
 			"emptyDescription": "Клиентите се членови на работниот простор со улога Гледач."
 		},
@@ -1993,6 +2038,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active on creation",
 				"createButton": "Create Promotion",
@@ -2040,6 +2086,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active",
 				"saveButton": "Save Changes",
@@ -2082,7 +2129,10 @@
 				"unknownProduct": "Производ",
 				"selectCustomer": "Изберете клиент...",
 				"unknownCustomer": "Клиент",
-				"noCustomers": "Не се пронајдени клиенти"
+				"noCustomers": "Не се пронајдени клиенти",
+				"promoCodePlaceholder": "Promo code",
+				"applyPromo": "Apply",
+				"promotionApplied": "Promotion"
 			}
 		}
 	}

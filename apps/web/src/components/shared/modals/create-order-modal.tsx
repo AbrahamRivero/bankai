@@ -1,6 +1,7 @@
-import { Check, CreditCard, Plus, X } from "lucide-react";
+import { Check, CreditCard, Plus, Tag, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,13 +31,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import type { ValidatePromotionResult } from "@/fetchers/promotions/validate-promotion";
 import useCreateOrder from "@/hooks/mutations/store/use-create-order";
+import useValidatePromotion from "@/hooks/mutations/store/use-validate-promotion";
 import useGetProducts from "@/hooks/queries/store/use-get-products";
 import useActiveWorkspace from "@/hooks/queries/workspace/use-active-workspace";
 import useGetWorkspaceUsers from "@/hooks/queries/workspace-users/use-get-workspace-users";
 import { useWorkspacePermission } from "@/hooks/use-workspace-permission";
 import { cn } from "@/lib/cn";
 import { toast } from "@/lib/toast";
+import type WorkspaceUser from "@/types/workspace-user";
 
 type OrderItemInput = {
   productId: string;
@@ -65,6 +69,8 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
   const { data: productsData } = useGetProducts({ workspaceId, limit: 200 });
   const { data: members } = useGetWorkspaceUsers({ workspaceId });
   const { mutateAsync: createOrder, isPending } = useCreateOrder();
+  const { mutateAsync: validatePromotion, isPending: isValidating } =
+    useValidatePromotion();
   const { canCreateOrders } = useWorkspacePermission();
   const [shippingAddress, setShippingAddress] = useState("");
   const [city, setCity] = useState("");
@@ -79,12 +85,16 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
   const [selectedProductId, setSelectedProductId] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromotion, setAppliedPromotion] =
+    useState<ValidatePromotionResult | null>(null);
+  const [promoError, setPromoError] = useState("");
   const [statusOpen, setStatusOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
 
   const products = productsData?.products ?? [];
-  const customers =
-    members
+  const customers: { id: string; name: string }[] =
+    (members as WorkspaceUser[] | undefined)
       ?.filter((m) => m.role === "viewer")
       .map((m) => ({
         id: m.userId,
@@ -97,7 +107,44 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
   );
   const shippingValue = Number.parseFloat(shipping) || 0;
   const discountValue = Number.parseFloat(discount) || 0;
-  const total = Math.max(0, subtotal + shippingValue - discountValue);
+  const promoDiscountValue = appliedPromotion?.discount ?? 0;
+  const total = Math.max(
+    0,
+    subtotal + shippingValue - discountValue - promoDiscountValue,
+  );
+
+  const handleApplyPromotion = async () => {
+    if (!promoCode.trim()) return;
+    setPromoError("");
+    try {
+      const result = await validatePromotion({
+        workspaceId,
+        code: promoCode.trim(),
+        subtotal,
+        shipping: shippingValue,
+        items: items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+        })),
+      });
+      if (result.valid) {
+        setAppliedPromotion(result);
+        setPromoError("");
+      } else {
+        setAppliedPromotion(null);
+        setPromoError(result.message ?? "Invalid promotion code");
+      }
+    } catch {
+      setAppliedPromotion(null);
+      setPromoError("Failed to validate promotion code");
+    }
+  };
+
+  const handleRemovePromotion = () => {
+    setAppliedPromotion(null);
+    setPromoCode("");
+    setPromoError("");
+  };
 
   const handleClose = () => {
     setShippingAddress("");
@@ -109,6 +156,9 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
     setItems([]);
     setShipping("0");
     setDiscount("0");
+    setPromoCode("");
+    setAppliedPromotion(null);
+    setPromoError("");
     setNotes("");
     setSelectedProductId("");
     setSelectedQuantity("1");
@@ -169,6 +219,7 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
         subtotal,
         shipping: shippingValue,
         discount: discountValue,
+        promotionCode: appliedPromotion?.valid ? promoCode.trim() : undefined,
         total,
         notes: notes.trim() || undefined,
         customerId: selectedCustomerId || undefined,
@@ -399,7 +450,7 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4 text-sm flex-wrap">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">
                   {t("store:modals.createOrder.subtotal")}
@@ -434,11 +485,94 @@ function CreateOrderModal({ open, onClose }: CreateOrderModalProps) {
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-              <span className="text-sm font-semibold">
-                {t("store:modals.createOrder.total")}
-              </span>
-              <span className="text-lg font-bold">${total.toFixed(2)}</span>
+            <div className="flex items-center gap-2 text-sm flex-wrap">
+              <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                <Tag className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <Input
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  placeholder={t(
+                    "store:modals.createOrder.promoCodePlaceholder",
+                  )}
+                  className="h-8 w-32 text-sm"
+                  disabled={!!appliedPromotion}
+                />
+                {appliedPromotion ? (
+                  <div className="flex items-center gap-1.5">
+                    <Badge variant="success" className="gap-1 text-xs">
+                      <Tag className="h-3 w-3" />
+                      {appliedPromotion.title}: -$
+                      {appliedPromotion.discount.toFixed(2)}
+                    </Badge>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={handleRemovePromotion}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={handleApplyPromotion}
+                    disabled={!promoCode.trim() || isValidating}
+                  >
+                    {isValidating
+                      ? "..."
+                      : t("store:modals.createOrder.applyPromo")}
+                  </Button>
+                )}
+              </div>
+              {promoError && (
+                <p className="w-full text-xs text-destructive">{promoError}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1 rounded-lg bg-muted/50 px-3 py-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {t("store:modals.createOrder.subtotal")}
+                </span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {t("store:modals.createOrder.shippingLabel")}
+                </span>
+                <span>${shippingValue.toFixed(2)}</span>
+              </div>
+              {discountValue > 0 && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {t("store:modals.createOrder.discountLabel")}
+                  </span>
+                  <span className="text-destructive">
+                    -${discountValue.toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {promoDiscountValue > 0 && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {appliedPromotion?.title ?? "Promo"}
+                  </span>
+                  <span className="text-destructive">
+                    -${promoDiscountValue.toFixed(2)}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center justify-between border-t border-border pt-1 mt-1">
+                <span className="text-sm font-semibold">
+                  {t("store:modals.createOrder.total")}
+                </span>
+                <span className="text-lg font-bold">${total.toFixed(2)}</span>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 py-2">

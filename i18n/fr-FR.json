@@ -1809,6 +1809,7 @@
 			"products": "Produits",
 			"orders": "Commandes",
 			"promotions": "Promotions",
+			"reviews": "Reviews",
 			"customers": "Clients"
 		},
 		"order": {
@@ -1874,7 +1875,45 @@
 			"productsSold": "Products Sold",
 			"uniqueCustomers": "Unique Customers",
 			"vsPreviousPeriod": "vs previous period",
-			"viewAllOrders": "View All Orders"
+			"viewAllOrders": "View All Orders",
+			"products": {
+				"totalProducts": "Total Products",
+				"lowStock": "Low Stock",
+				"lowStockDescription": "≤5 units",
+				"outOfStock": "Out of Stock",
+				"averagePrice": "Avg. Price",
+				"topFavorited": "Most Favorited",
+				"byGender": "Products by Gender"
+			},
+			"orders": {
+				"byStatus": "Orders by Status",
+				"pending": "Pending",
+				"confirmed": "Confirmed",
+				"shipped": "Shipped",
+				"completed": "Completed",
+				"cancelled": "Cancelled"
+			},
+			"promotions": {
+				"active": "Active Promotions",
+				"totalPromotions": "Total Promotions",
+				"totalUses": "Total Uses",
+				"expiringSoon": "Expiring Soon",
+				"byType": "Promotions by Type"
+			},
+			"reviews": {
+				"totalReviews": "Total Reviews",
+				"averageRating": "Avg. Rating",
+				"withoutReviews": "Without Reviews",
+				"ratingDistribution": "Rating Distribution",
+				"stars": "{{count}} stars"
+			},
+			"customers": {
+				"totalCustomers": "Total Customers",
+				"newCustomers": "New Customers",
+				"repeatRate": "Repeat Rate",
+				"topBuyers": "Top Buyers",
+				"byProvince": "Customers by Province"
+			}
 		},
 		"common": {
 			"noProducts": "No products yet",
@@ -1911,6 +1950,12 @@
 			"unbanDialogDescription": "Cela débannira {{name}}. Il pourra se connecter et accéder aux espaces de travail à nouveau.",
 			"removeDialogTitle": "Supprimer le client ?",
 			"removeDialogDescription": "{{name}} sera retiré de cet espace de travail. Il n'aura plus accès à la boutique.",
+			"promoteToMember": "Promouvoir en Membre",
+			"promoteToAdmin": "Promouvoir en Admin",
+			"promoteSuccess": "Client promu avec succès",
+			"promoteError": "Échec de la promotion du client",
+			"promoteDialogTitle": "Promouvoir le Client?",
+			"promoteDialogDescription": "Cela promouvra {{name}} en {{role}}. Ils auront des permissions supplémentaires dans cet espace de travail.",
 			"emptyTitle": "Aucun client pour le moment",
 			"emptyDescription": "Les clients sont des membres de l'espace de travail avec le rôle d'Observateur."
 		},
@@ -1993,6 +2038,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active on creation",
 				"createButton": "Create Promotion",
@@ -2040,6 +2086,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active",
 				"saveButton": "Save Changes",
@@ -2082,7 +2129,10 @@
 				"unknownProduct": "Produit",
 				"selectCustomer": "Sélectionner un client...",
 				"unknownCustomer": "Client",
-				"noCustomers": "Aucun client trouvé"
+				"noCustomers": "Aucun client trouvé",
+				"promoCodePlaceholder": "Code promo",
+				"applyPromo": "Appliquer",
+				"promotionApplied": "Promotion"
 			}
 		}
 	}

@@ -1810,6 +1810,7 @@
 			"products": "Products",
 			"orders": "Orders",
 			"promotions": "Promotions",
+			"reviews": "Reviews",
 			"customers": "Customers"
 		},
 		"order": {
@@ -1875,7 +1876,45 @@
 			"productsSold": "Products Sold",
 			"uniqueCustomers": "Unique Customers",
 			"vsPreviousPeriod": "vs previous period",
-			"viewAllOrders": "View All Orders"
+			"viewAllOrders": "View All Orders",
+			"products": {
+				"totalProducts": "Total Products",
+				"lowStock": "Low Stock",
+				"lowStockDescription": "≤5 units",
+				"outOfStock": "Out of Stock",
+				"averagePrice": "Avg. Price",
+				"topFavorited": "Most Favorited",
+				"byGender": "Products by Gender"
+			},
+			"orders": {
+				"byStatus": "Orders by Status",
+				"pending": "Pending",
+				"confirmed": "Confirmed",
+				"shipped": "Shipped",
+				"completed": "Completed",
+				"cancelled": "Cancelled"
+			},
+			"promotions": {
+				"active": "Active Promotions",
+				"totalPromotions": "Total Promotions",
+				"totalUses": "Total Uses",
+				"expiringSoon": "Expiring Soon",
+				"byType": "Promotions by Type"
+			},
+			"reviews": {
+				"totalReviews": "Total Reviews",
+				"averageRating": "Avg. Rating",
+				"withoutReviews": "Without Reviews",
+				"ratingDistribution": "Rating Distribution",
+				"stars": "{{count}} stars"
+			},
+			"customers": {
+				"totalCustomers": "Total Customers",
+				"newCustomers": "New Customers",
+				"repeatRate": "Repeat Rate",
+				"topBuyers": "Top Buyers",
+				"byProvince": "Customers by Province"
+			}
 		},
 		"common": {
 			"noProducts": "No products yet",
@@ -1912,6 +1951,12 @@
 			"unbanDialogDescription": "Це розблокує {{name}}. Він знову зможе увійти та отримати доступ до робочих просторів.",
 			"removeDialogTitle": "Видалити клієнта?",
 			"removeDialogDescription": "{{name}} буде видалено з цього робочого простору. Він більше не матиме доступу до магазину.",
+			"promoteToMember": "Підвищити до Учасника",
+			"promoteToAdmin": "Підвищити до Адміна",
+			"promoteSuccess": "Клієнта успішно підвищено",
+			"promoteError": "Помилка при підвищенні клієнта",
+			"promoteDialogTitle": "Підвищити клієнта?",
+			"promoteDialogDescription": "Це підвищить {{name}} до {{role}}. Він отримає додаткові дозволи в цьому робочому просторі.",
 			"emptyTitle": "Ще немає клієнтів",
 			"emptyDescription": "Клієнти — це учасники робочого простору з роллю Глядач."
 		},
@@ -1994,6 +2039,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active on creation",
 				"createButton": "Create Promotion",
@@ -2041,6 +2087,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active",
 				"saveButton": "Save Changes",
@@ -2083,7 +2130,10 @@
 				"unknownProduct": "Товар",
 				"selectCustomer": "Оберіть клієнта...",
 				"unknownCustomer": "Клієнт",
-				"noCustomers": "Клієнтів не знайдено"
+				"noCustomers": "Клієнтів не знайдено",
+				"promoCodePlaceholder": "Promo code",
+				"applyPromo": "Apply",
+				"promotionApplied": "Promotion"
 			}
 		}
 	}

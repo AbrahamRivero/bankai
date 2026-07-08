@@ -1,10 +1,17 @@
-import { client } from "@kaneo/libs";
+import { getApiUrl } from "@/fetchers/get-api-url";
 
 export type OrderDetailResponse = {
   id: string;
   orderNumber: string;
   trackingNumber: string | null;
   orderStatus: string;
+  shippingAddress: string;
+  city: string;
+  province: string;
+  phone: string | null;
+  discount: number;
+  promotionId: string | null;
+  promotionDiscount: number;
   total: number;
   subtotal: number;
   shipping: number;
@@ -23,10 +30,12 @@ export type OrderDetailResponse = {
   updatedAt: string;
 };
 
-async function getOrder(id: string) {
-  const response = await client.orders[":id"].$get({
-    param: { id },
-  });
+async function getOrder(id: string, workspaceId?: string) {
+  const searchParams = new URLSearchParams();
+  if (workspaceId) searchParams.set("workspaceId", workspaceId);
+  const query = searchParams.toString();
+  const url = `${getApiUrl("orders")}/${id}${query ? `?${query}` : ""}`;
+  const response = await fetch(url, { credentials: "include" });
 
   if (!response.ok) {
     const error = await response.text();

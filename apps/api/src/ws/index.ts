@@ -393,6 +393,7 @@ const storeUpdateEvents: Array<{
   { eventName: "promotion.created", messageType: "PROMOTION_UPDATED" },
   { eventName: "promotion.updated", messageType: "PROMOTION_UPDATED" },
   { eventName: "promotion.deleted", messageType: "PROMOTION_UPDATED" },
+  { eventName: "promotion.used", messageType: "PROMOTION_UPDATED" },
   { eventName: "review.created", messageType: "REVIEW_UPDATED" },
   { eventName: "review.updated", messageType: "REVIEW_UPDATED" },
   { eventName: "review.deleted", messageType: "REVIEW_UPDATED" },

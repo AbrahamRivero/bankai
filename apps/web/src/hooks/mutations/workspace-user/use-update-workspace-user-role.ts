@@ -39,6 +39,10 @@ function useUpdateWorkspaceUserRole() {
       queryClient.invalidateQueries({
         queryKey: ["workspace-users", variables.workspaceId],
       });
+      // The custom members endpoint used by the customers page.
+      queryClient.invalidateQueries({
+        queryKey: ["workspace-members", variables.workspaceId],
+      });
       // useGetActiveWorkspaceUser is keyed ["workspace-user", "active", ...]
       // and drives sidebar/role badges for the current user.
       queryClient.invalidateQueries({

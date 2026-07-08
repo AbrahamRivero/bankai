@@ -1583,6 +1583,7 @@
 			"products": "Productos",
 			"orders": "Pedidos",
 			"promotions": "Promociones",
+			"reviews": "Reviews",
 			"customers": "Clientes"
 		},
 		"product": {
@@ -1648,7 +1649,45 @@
 			"productsSold": "Productos Vendidos",
 			"uniqueCustomers": "Clientes nicos",
 			"vsPreviousPeriod": "vs periodo anterior",
-			"viewAllOrders": "Ver Todos los Pedidos"
+			"viewAllOrders": "Ver Todos los Pedidos",
+			"products": {
+				"totalProducts": "Productos Totales",
+				"lowStock": "Stock Bajo",
+				"lowStockDescription": "5 unidades",
+				"outOfStock": "Agotados",
+				"averagePrice": "Precio Promedio",
+				"topFavorited": "Ms Favoritados",
+				"byGender": "Productos por Gnero"
+			},
+			"orders": {
+				"byStatus": "Pedidos por Estado",
+				"pending": "Pendiente",
+				"confirmed": "Confirmado",
+				"shipped": "Enviado",
+				"completed": "Completado",
+				"cancelled": "Cancelado"
+			},
+			"promotions": {
+				"active": "Promociones Activas",
+				"totalPromotions": "Promociones Totales",
+				"totalUses": "Usos Totales",
+				"expiringSoon": "Por Vencer",
+				"byType": "Promociones por Tipo"
+			},
+			"reviews": {
+				"totalReviews": "Reseas Totales",
+				"averageRating": "Calificacin Promedio",
+				"withoutReviews": "Sin Reseas",
+				"ratingDistribution": "Distribucin de Calificaciones",
+				"stars": "{{count}} estrellas"
+			},
+			"customers": {
+				"totalCustomers": "Clientes Totales",
+				"newCustomers": "Clientes Nuevos",
+				"repeatRate": "Tasa de Recurrencia",
+				"topBuyers": "Mejores Compradores",
+				"byProvince": "Clientes por Provincia"
+			}
 		},
 		"common": {
 			"noProducts": "No hay productos an",
@@ -1685,6 +1724,12 @@
 			"unbanDialogDescription": "Esto desbloqueará a {{name}}. Podrá iniciar sesión y acceder a los workspaces nuevamente.",
 			"removeDialogTitle": "¿Eliminar cliente?",
 			"removeDialogDescription": "Esto eliminará a {{name}} de este workspace. Ya no tendrá acceso a la tienda.",
+			"promoteToMember": "Promover a Miembro",
+			"promoteToAdmin": "Promover a Admin",
+			"promoteSuccess": "Cliente promovido exitosamente",
+			"promoteError": "Error al promover cliente",
+			"promoteDialogTitle": "¿Promover Cliente?",
+			"promoteDialogDescription": "Esto promoverá a {{name}} a {{role}}. Tendrá permisos adicionales en este workspace.",
 			"emptyTitle": "Aún no hay clientes",
 			"emptyDescription": "Los clientes son miembros del workspace con el rol de Visualizador."
 		},
@@ -1767,6 +1812,7 @@
 				"clearEndDate": "Borrar fecha de fin",
 				"usageLimit": "Límite de uso",
 				"usageLimitPlaceholder": "Sin límite",
+				"minimumPurchaseAmount": "Monto mínimo de compra",
 				"applicableProductsLabel": "Productos aplicables",
 				"activeLabel": "Activa al crearla",
 				"createButton": "Crear Promoción",
@@ -1814,6 +1860,7 @@
 				"clearEndDate": "Borrar fecha de fin",
 				"usageLimit": "Límite de uso",
 				"usageLimitPlaceholder": "Sin límite",
+				"minimumPurchaseAmount": "Monto mínimo de compra",
 				"applicableProductsLabel": "Productos aplicables",
 				"activeLabel": "Activa",
 				"saveButton": "Guardar cambios",
@@ -1856,7 +1903,10 @@
 				"unknownProduct": "Producto",
 				"selectCustomer": "Seleccionar un cliente...",
 				"unknownCustomer": "Cliente",
-				"noCustomers": "No se encontraron clientes"
+				"noCustomers": "No se encontraron clientes",
+				"promoCodePlaceholder": "Código promocional",
+				"applyPromo": "Aplicar",
+				"promotionApplied": "Promoción"
 			}
 		}
 	}

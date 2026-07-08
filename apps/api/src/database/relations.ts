@@ -485,7 +485,19 @@ export const orderTableRelations = relations(orderTable, ({ one, many }) => ({
     references: [userTable.id],
   }),
   orderItems: many(orderItemTable),
+  promotion: one(promotionTable, {
+    fields: [orderTable.promotionId],
+    references: [promotionTable.id],
+  }),
 }));
+
+export const promotionTableRelations = relations(
+  promotionTable,
+  ({ many }) => ({
+    products: many(promotionProductTable),
+    orders: many(orderTable),
+  }),
+);
 
 export const orderItemTableRelations = relations(orderItemTable, ({ one }) => ({
   order: one(orderTable, {
@@ -497,13 +509,6 @@ export const orderItemTableRelations = relations(orderItemTable, ({ one }) => ({
     references: [productTable.id],
   }),
 }));
-
-export const promotionTableRelations = relations(
-  promotionTable,
-  ({ many }) => ({
-    products: many(promotionProductTable),
-  }),
-);
 
 export const promotionProductTableRelations = relations(
   promotionProductTable,

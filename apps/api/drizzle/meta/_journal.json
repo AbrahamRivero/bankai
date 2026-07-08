@@ -253,6 +253,13 @@
 			"when": 1783113068660,
 			"tag": "0035_workable_penance",
 			"breakpoints": true
+		},
+		{
+			"idx": 36,
+			"version": "7",
+			"when": 1783359411608,
+			"tag": "0036_fantastic_moira_mactaggert",
+			"breakpoints": true
 		}
 	]
 }

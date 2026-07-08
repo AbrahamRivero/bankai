@@ -15,6 +15,7 @@ function useGetFullWorkspace({
   return useQuery({
     queryKey: ["workspace", "full", workspaceId || workspaceSlug],
     enabled: !!(workspaceId || workspaceSlug),
+    refetchOnMount: true,
     queryFn: async () => {
       const { data, error } = await authClient.organization.getFullOrganization(
         {

@@ -131,11 +131,14 @@ function EditProductModal({ open, onClose, productId }: EditProductModalProps) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(getApiUrl("files/products"), {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    });
+    const response = await fetch(
+      getApiUrl(`files/products?workspaceId=${workspaceId}`),
+      {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      },
+    );
 
     if (!response.ok) {
       throw new Error(t("store:modals.editProduct.imagesUploadError"));

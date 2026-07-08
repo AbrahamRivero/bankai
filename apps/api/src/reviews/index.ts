@@ -6,6 +6,7 @@ import { workspaceAccess } from "../utils/workspace-access-middleware";
 import createReview from "./controllers/create-review";
 import deleteReview from "./controllers/delete-review";
 import getReviewsByProduct from "./controllers/get-reviews-by-product";
+import getReviewsInsights from "./controllers/get-reviews-insights";
 import updateReview from "./controllers/update-review";
 import {
   createReviewSchema,
@@ -37,6 +38,23 @@ const reviews = new Hono<{ Variables: { userId: string } }>()
       const userId = c.get("userId");
       const review = await createReview(comment, rating, productId, userId);
       return c.json(review);
+    },
+  )
+  .get(
+    "/insights",
+    describeRoute({
+      operationId: "getReviewsInsights",
+      tags: ["Store"],
+      description: "Get reviews insights for the dashboard",
+      responses: { 200: { description: "Reviews insights" } },
+    }),
+    workspaceAccess.fromQuery("workspaceId"),
+    requireWorkspacePermission({ review: ["read"] }),
+    validator("query", v.object({ workspaceId: v.string() })),
+    async (c) => {
+      const { workspaceId } = c.req.valid("query");
+      const insights = await getReviewsInsights(workspaceId);
+      return c.json(insights);
     },
   )
   .get(

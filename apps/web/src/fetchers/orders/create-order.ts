@@ -7,6 +7,7 @@ export type CreateOrderInput = {
   city: string;
   province: string;
   discount?: number;
+  promotionCode?: string;
   paymentMethod?: "usd" | "euro" | "cup" | "card";
   orderStatus: "pending" | "cancelled" | "completed" | "confirmed" | "shipped";
   subtotal: number;

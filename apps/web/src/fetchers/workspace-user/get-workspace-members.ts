@@ -1,6 +1,7 @@
 import { getApiUrl } from "@/fetchers/get-api-url";
 
 export type WorkspaceMember = {
+  memberId: string;
   id: string;
   name: string;
   email: string;

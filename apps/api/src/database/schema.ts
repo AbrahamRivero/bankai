@@ -1047,6 +1047,12 @@ export const orderTable = pgTable(
     city: text("city").notNull(),
     province: text("province").notNull(),
     discount: doublePrecision("discount").default(0).notNull(),
+    promotionId: text("promotion_id").references(() => promotionTable.id, {
+      onDelete: "set null",
+    }),
+    promotionDiscount: doublePrecision("promotion_discount")
+      .default(0)
+      .notNull(),
     paymentMethod: text("payment_method").default("cup").notNull(),
     orderStatus: text("order_status").default("pending").notNull(),
     orderNumber: text("order_number").notNull().unique(),
@@ -1077,6 +1083,7 @@ export const orderTable = pgTable(
     index("order_orderStatus_idx").on(table.orderStatus),
     index("order_createdAt_idx").on(table.createdAt),
     index("order_workspaceId_idx").on(table.workspaceId),
+    index("order_promotionId_idx").on(table.promotionId),
   ],
 );
 

@@ -3,8 +3,10 @@ import {
   Ban,
   EllipsisIcon,
   ExternalLinkIcon,
+  Shield,
   ShieldCheck,
   TrashIcon,
+  UserPlus,
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +14,7 @@ import type { WorkspaceMember } from "@/fetchers/workspace-user/get-workspace-me
 import useBanWorkspaceUser from "@/hooks/mutations/workspace-user/use-ban-workspace-user";
 import useDeleteWorkspaceUser from "@/hooks/mutations/workspace-user/use-delete-workspace-user";
 import useUnbanWorkspaceUser from "@/hooks/mutations/workspace-user/use-unban-workspace-user";
+import useUpdateWorkspaceUserRole from "@/hooks/mutations/workspace-user/use-update-workspace-user-role";
 import { useWorkspacePermission } from "@/hooks/use-workspace-permission";
 import { cn } from "@/lib/cn";
 import { formatDateMedium } from "@/lib/format";
@@ -81,12 +84,17 @@ function CustomersTable({ workspaceId, users }: Props) {
   );
   const [customerToUnban, setCustomerToUnban] =
     useState<WorkspaceMember | null>(null);
+  const [customerToPromote, setCustomerToPromote] =
+    useState<WorkspaceMember | null>(null);
+  const [promoteRole, setPromoteRole] = useState<string>("");
 
   const { mutateAsync: deleteWorkspaceUser, isPending: isDeleting } =
     useDeleteWorkspaceUser();
   const { mutateAsync: banUser, isPending: isBanning } = useBanWorkspaceUser();
   const { mutateAsync: unbanUser, isPending: isUnbanning } =
     useUnbanWorkspaceUser();
+  const { mutateAsync: updateRole, isPending: isPromoting } =
+    useUpdateWorkspaceUserRole();
   const { canRemoveMembers, canDeleteWorkspace } = useWorkspacePermission();
   const canRemove = Boolean(canRemoveMembers());
 
@@ -138,6 +146,27 @@ function CustomersTable({ workspaceId, users }: Props) {
       );
     } finally {
       setCustomerToUnban(null);
+    }
+  };
+
+  const handlePromoteCustomer = async () => {
+    if (!customerToPromote || !promoteRole) return;
+    try {
+      await updateRole({
+        workspaceId,
+        memberId: customerToPromote.memberId,
+        role: promoteRole,
+      });
+      toast.success(t("store:customers.promoteSuccess"));
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t("store:customers.promoteError"),
+      );
+    } finally {
+      setCustomerToPromote(null);
+      setPromoteRole("");
     }
   };
 
@@ -238,6 +267,24 @@ function CustomersTable({ workspaceId, users }: Props) {
                         </MenuItem>
                         {canDeleteWorkspace() ? (
                           <>
+                            <MenuItem
+                              onClick={() => {
+                                setCustomerToPromote(customer);
+                                setPromoteRole("member");
+                              }}
+                            >
+                              <UserPlus className="size-4" />
+                              {t("store:customers.promoteToMember")}
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => {
+                                setCustomerToPromote(customer);
+                                setPromoteRole("admin");
+                              }}
+                            >
+                              <Shield className="size-4" />
+                              {t("store:customers.promoteToAdmin")}
+                            </MenuItem>
                             {isBanned ? (
                               <MenuItem
                                 onClick={() => setCustomerToUnban(customer)}
@@ -379,6 +426,43 @@ function CustomersTable({ workspaceId, users }: Props) {
               <Button size="sm" disabled={isUnbanning}>
                 <ShieldCheck className="mr-2 size-4" />
                 {t("store:customers.unbanCustomer")}
+              </Button>
+            </AlertDialogClose>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!customerToPromote}
+        onOpenChange={(open) => !open && setCustomerToPromote(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("store:customers.promoteDialogTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("store:customers.promoteDialogDescription", {
+                name: customerToPromote?.name || customerToPromote?.email || "",
+                role: promoteRole === "admin" ? "Admin" : "Member",
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogClose disabled={isPromoting}>
+              <Button variant="outline" size="sm" disabled={isPromoting}>
+                {t("common:actions.cancel")}
+              </Button>
+            </AlertDialogClose>
+            <AlertDialogClose
+              onClick={handlePromoteCustomer}
+              disabled={isPromoting}
+            >
+              <Button size="sm" disabled={isPromoting}>
+                <ShieldCheck className="mr-2 size-4" />
+                {promoteRole === "admin"
+                  ? t("store:customers.promoteToAdmin")
+                  : t("store:customers.promoteToMember")}
               </Button>
             </AlertDialogClose>
           </AlertDialogFooter>

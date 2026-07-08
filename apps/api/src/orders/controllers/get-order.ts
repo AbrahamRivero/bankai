@@ -18,6 +18,8 @@ async function getOrder(id: string, userId?: string) {
       trackingNumber: orderTable.trackingNumber,
       subtotal: orderTable.subtotal,
       shipping: orderTable.shipping,
+      promotionId: orderTable.promotionId,
+      promotionDiscount: orderTable.promotionDiscount,
       total: orderTable.total,
       notes: orderTable.notes,
       userId: orderTable.userId,

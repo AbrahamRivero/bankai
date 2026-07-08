@@ -14,6 +14,7 @@ export type UpdateOrderInput = {
   shipping?: number;
   total?: number;
   notes?: string;
+  promotionCode?: string | null;
   customerId?: string | null;
   orderItems?: Array<{
     quantity: number;

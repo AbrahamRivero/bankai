@@ -9,6 +9,7 @@ import deleteProduct from "./controllers/delete-product";
 import getMostFavorited from "./controllers/get-most-favorited";
 import getProduct from "./controllers/get-product";
 import getProducts from "./controllers/get-products";
+import getProductsInsights from "./controllers/get-products-insights";
 import getUserFavorites from "./controllers/get-user-favorites";
 import isProductInFavorites from "./controllers/is-product-in-favorites";
 import removeFromFavorites from "./controllers/remove-from-favorites";
@@ -140,6 +141,23 @@ const products = new Hono<{
       const userId = c.get("userId");
       const check = await isProductInFavorites(productId, userId);
       return c.json({ isFavorite: check });
+    },
+  )
+  .get(
+    "/insights",
+    describeRoute({
+      operationId: "getProductsInsights",
+      tags: ["Store"],
+      description: "Get products insights for the dashboard",
+      responses: { 200: { description: "Products insights" } },
+    }),
+    workspaceAccess.fromQuery("workspaceId"),
+    requireWorkspacePermission({ product: ["read"] }),
+    validator("query", v.object({ workspaceId: v.string() })),
+    async (c) => {
+      const { workspaceId } = c.req.valid("query");
+      const insights = await getProductsInsights(workspaceId);
+      return c.json(insights);
     },
   )
   .get(

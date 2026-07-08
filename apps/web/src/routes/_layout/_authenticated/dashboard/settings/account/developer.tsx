@@ -59,7 +59,7 @@ function RouteComponent() {
         </div>
 
         <CardFrame>
-          <Card className="!rounded-none !border-t-0">
+          <Card className="rounded-none! border-t-0!">
             <CardHeader>
               <CardTitle className="inline-flex items-center gap-2 text-base">
                 <KeyRound className="size-4" />
@@ -80,7 +80,7 @@ function RouteComponent() {
             </CardHeader>
           </Card>
 
-          <Card className="!rounded-none">
+          <Card className="rounded-none!">
             <CardPanel className="p-4">
               <ApiKeyTable apiKeys={apiKeys} isLoading={isLoading} />
             </CardPanel>

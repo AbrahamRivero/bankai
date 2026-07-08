@@ -1811,6 +1811,7 @@
 			"products": "Products",
 			"orders": "Orders",
 			"promotions": "Promotions",
+			"reviews": "Reviews",
 			"customers": "Customers"
 		},
 		"order": {
@@ -1876,7 +1877,45 @@
 			"productsSold": "Products Sold",
 			"uniqueCustomers": "Unique Customers",
 			"vsPreviousPeriod": "vs previous period",
-			"viewAllOrders": "View All Orders"
+			"viewAllOrders": "View All Orders",
+			"products": {
+				"totalProducts": "Total Products",
+				"lowStock": "Low Stock",
+				"lowStockDescription": "≤5 units",
+				"outOfStock": "Out of Stock",
+				"averagePrice": "Avg. Price",
+				"topFavorited": "Most Favorited",
+				"byGender": "Products by Gender"
+			},
+			"orders": {
+				"byStatus": "Orders by Status",
+				"pending": "Pending",
+				"confirmed": "Confirmed",
+				"shipped": "Shipped",
+				"completed": "Completed",
+				"cancelled": "Cancelled"
+			},
+			"promotions": {
+				"active": "Active Promotions",
+				"totalPromotions": "Total Promotions",
+				"totalUses": "Total Uses",
+				"expiringSoon": "Expiring Soon",
+				"byType": "Promotions by Type"
+			},
+			"reviews": {
+				"totalReviews": "Total Reviews",
+				"averageRating": "Avg. Rating",
+				"withoutReviews": "Without Reviews",
+				"ratingDistribution": "Rating Distribution",
+				"stars": "{{count}} stars"
+			},
+			"customers": {
+				"totalCustomers": "Total Customers",
+				"newCustomers": "New Customers",
+				"repeatRate": "Repeat Rate",
+				"topBuyers": "Top Buyers",
+				"byProvince": "Customers by Province"
+			}
 		},
 		"common": {
 			"noProducts": "No products yet",
@@ -1913,6 +1952,12 @@
 			"unbanDialogDescription": "이것은 {{name}}의 차단을 해제합니다. 다시 로그인하고 워크스페이스에 접근할 수 있습니다.",
 			"removeDialogTitle": "고객을 제거하시겠습니까?",
 			"removeDialogDescription": "{{name}}이(가) 이 워크스페이스에서 제거됩니다. 더 이상 스토어에 접근할 수 없습니다.",
+			"promoteToMember": "멤버로 승격",
+			"promoteToAdmin": "관리자로 승격",
+			"promoteSuccess": "고객이 성공적으로 승격되었습니다",
+			"promoteError": "고객 승격 실패",
+			"promoteDialogTitle": "고객을 승격하시겠습니까?",
+			"promoteDialogDescription": "{{name}}을(를) {{role}}(으)로 승격합니다. 이 워크스페이스에서 추가 권한을 갖게 됩니다.",
 			"emptyTitle": "아직 고객이 없습니다",
 			"emptyDescription": "고객은 뷰어 역할을 가진 워크스페이스 구성원입니다."
 		},
@@ -1995,6 +2040,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active on creation",
 				"createButton": "Create Promotion",
@@ -2042,6 +2088,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active",
 				"saveButton": "Save Changes",
@@ -2084,7 +2131,10 @@
 				"unknownProduct": "상품",
 				"selectCustomer": "고객 선택...",
 				"unknownCustomer": "고객",
-				"noCustomers": "고객을 찾을 수 없습니다"
+				"noCustomers": "고객을 찾을 수 없습니다",
+				"promoCodePlaceholder": "Promo code",
+				"applyPromo": "Apply",
+				"promotionApplied": "Promotion"
 			}
 		}
 	}

@@ -48,6 +48,7 @@ type EditPromotionModalProps = {
     endDate: string;
     maxUses: number | null;
     currentUses: number;
+    minimumPurchaseAmount: number | null;
   };
 };
 
@@ -73,6 +74,11 @@ function EditPromotionModal({
   const [maxUses, setMaxUses] = useState(
     promotion.maxUses ? String(promotion.maxUses) : "",
   );
+  const [minimumPurchaseAmount, setMinimumPurchaseAmount] = useState(
+    promotion.minimumPurchaseAmount
+      ? String(promotion.minimumPurchaseAmount)
+      : "",
+  );
   const { data: workspace } = useActiveWorkspace();
   const workspaceId = workspace?.id ?? "";
   const { mutateAsync: updatePromotionMutation, isPending } =
@@ -94,6 +100,7 @@ function EditPromotionModal({
   }, [promotionProducts]);
 
   const handleClose = () => {
+    setMinimumPurchaseAmount("");
     setApplicableProducts([]);
     setSelectedProductId("");
     setSelectedQuantity("1");
@@ -149,6 +156,9 @@ function EditPromotionModal({
         startDate: startDate ? startDate.toISOString() : "",
         endDate: endDate ? endDate.toISOString() : "",
         maxUses: maxUses ? Number.parseInt(maxUses, 10) : undefined,
+        minimumPurchaseAmount: minimumPurchaseAmount
+          ? Number.parseFloat(minimumPurchaseAmount)
+          : undefined,
         applicableProductIds:
           applicableProducts.length > 0 ? applicableProducts : undefined,
       });
@@ -394,6 +404,22 @@ function EditPromotionModal({
                 placeholder={t(
                   "store:modals.editPromotion.usageLimitPlaceholder",
                 )}
+                className="mt-1"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-promo-min-purchase">
+                {t("store:modals.editPromotion.minimumPurchaseAmount")}
+              </Label>
+              <Input
+                id="edit-promo-min-purchase"
+                type="number"
+                min="0"
+                step="0.01"
+                value={minimumPurchaseAmount}
+                onChange={(e) => setMinimumPurchaseAmount(e.target.value)}
+                placeholder="$0.00"
                 className="mt-1"
               />
             </div>

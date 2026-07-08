@@ -119,12 +119,14 @@ function MembersTable({ workspaceId, invitations, users }: Props) {
 
   // Owner first, then everyone else (stable on ties so the original
   // listMembers order is preserved within each group).
-  const sortedUsers = [...users].sort((a, b) => {
-    if (a.role === b.role) return 0;
-    if (a.role === "owner") return -1;
-    if (b.role === "owner") return 1;
-    return 0;
-  });
+  const sortedUsers = [...users]
+    .filter((user) => user.role !== "viewer")
+    .sort((a, b) => {
+      if (a.role === b.role) return 0;
+      if (a.role === "owner") return -1;
+      if (b.role === "owner") return 1;
+      return 0;
+    });
 
   const pendingInvitations = invitations.filter(
     (inv) => inv.status !== "accepted" && inv.status !== "canceled",

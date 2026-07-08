@@ -1,9 +1,14 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import db from "../../database";
-import { orderItemTable, orderTable } from "../../database/schema";
+import {
+  orderItemTable,
+  orderTable,
+  promotionTable,
+} from "../../database/schema";
 import { publishEvent } from "../../events";
 import createNotification from "../../notification/controllers/create-notification";
+import validatePromotion from "../../promotions/controllers/validate-promotion";
 
 type UpdateOrderInput = {
   shippingAddress?: string;
@@ -17,13 +22,14 @@ type UpdateOrderInput = {
   shipping?: number;
   total?: number;
   notes?: string;
+  promotionCode?: string;
   customerId?: string | null;
   orderItems?: { quantity: number; product: string; size?: string }[];
   workspaceId?: string;
 };
 
 async function updateOrder(id: string, input: UpdateOrderInput) {
-  const { orderItems, workspaceId, ...orderData } = input;
+  const { orderItems, workspaceId, promotionCode, ...orderData } = input;
 
   const [existing] = await db
     .select()
@@ -37,8 +43,47 @@ async function updateOrder(id: string, input: UpdateOrderInput) {
     });
   }
 
-  if (Object.keys(orderData).length > 0) {
-    await db.update(orderTable).set(orderData).where(eq(orderTable.id, id));
+  const orderUpdate: Record<string, unknown> = { ...orderData };
+
+  if (promotionCode === "") {
+    orderUpdate.promotionId = null;
+    orderUpdate.promotionDiscount = 0;
+  } else if (promotionCode) {
+    const validation = await validatePromotion({
+      workspaceId: workspaceId ?? existing.workspaceId,
+      code: promotionCode,
+      subtotal: orderData.subtotal ?? existing.subtotal,
+      shipping: orderData.shipping ?? existing.shipping,
+      items:
+        orderItems?.map((item) => ({
+          productId: item.product,
+          quantity: item.quantity,
+        })) ?? [],
+    });
+
+    if (!validation.valid) {
+      throw new Error(validation.message ?? "Invalid promotion code");
+    }
+
+    const manualDiscount = orderData.discount ?? existing.discount;
+    const subtotal = orderData.subtotal ?? existing.subtotal;
+    const shipping = orderData.shipping ?? existing.shipping;
+
+    orderUpdate.promotionId = validation.promotionId;
+    orderUpdate.promotionDiscount = validation.discount;
+    orderUpdate.total = Math.max(
+      0,
+      subtotal + shipping - manualDiscount - validation.discount,
+    );
+
+    await db
+      .update(promotionTable)
+      .set({ currentUses: sql`${promotionTable.currentUses} + 1` })
+      .where(eq(promotionTable.id, validation.promotionId));
+  }
+
+  if (Object.keys(orderUpdate).length > 0) {
+    await db.update(orderTable).set(orderUpdate).where(eq(orderTable.id, id));
   }
 
   if (orderItems) {
@@ -78,6 +123,15 @@ async function updateOrder(id: string, input: UpdateOrderInput) {
     orderId: id,
     userId: updated.userId,
   });
+
+  if (updated.promotionId && updated.promotionId !== existing.promotionId) {
+    await publishEvent("promotion.used", {
+      workspaceId,
+      promotionId: updated.promotionId,
+      orderId: id,
+      userId: updated.userId,
+    });
+  }
 
   if (existing.orderStatus !== updated.orderStatus && updated.customerId) {
     const statusLabels: Record<string, string> = {

@@ -52,6 +52,7 @@ function CreatePromotionModal({ open, onClose }: CreatePromotionModalProps) {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [maxUses, setMaxUses] = useState("");
+  const [minimumPurchaseAmount, setMinimumPurchaseAmount] = useState("");
   const [applicableProducts, setApplicableProducts] = useState<
     { productId: string; quantity: number }[]
   >([]);
@@ -71,6 +72,7 @@ function CreatePromotionModal({ open, onClose }: CreatePromotionModalProps) {
     setStartDate(undefined);
     setEndDate(undefined);
     setMaxUses("");
+    setMinimumPurchaseAmount("");
     setApplicableProducts([]);
     setSelectedProductId("");
     setSelectedQuantity("1");
@@ -125,6 +127,9 @@ function CreatePromotionModal({ open, onClose }: CreatePromotionModalProps) {
         startDate: startDate ? startDate.toISOString() : "",
         endDate: endDate ? endDate.toISOString() : "",
         maxUses: maxUses ? Number.parseInt(maxUses, 10) : undefined,
+        minimumPurchaseAmount: minimumPurchaseAmount
+          ? Number.parseFloat(minimumPurchaseAmount)
+          : undefined,
         applicableProductIds:
           applicableProducts.length > 0 ? applicableProducts : undefined,
       });
@@ -370,6 +375,22 @@ function CreatePromotionModal({ open, onClose }: CreatePromotionModalProps) {
                 placeholder={t(
                   "store:modals.createPromotion.usageLimitPlaceholder",
                 )}
+                className="mt-1"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="promo-min-purchase">
+                {t("store:modals.createPromotion.minimumPurchaseAmount")}
+              </Label>
+              <Input
+                id="promo-min-purchase"
+                type="number"
+                min="0"
+                step="0.01"
+                value={minimumPurchaseAmount}
+                onChange={(e) => setMinimumPurchaseAmount(e.target.value)}
+                placeholder="$0.00"
                 className="mt-1"
               />
             </div>

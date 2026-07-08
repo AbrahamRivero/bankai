@@ -1824,6 +1824,7 @@
 			"products": "Products",
 			"orders": "Orders",
 			"promotions": "Promotions",
+			"reviews": "Reviews",
 			"customers": "Customers"
 		},
 		"order": {
@@ -1889,7 +1890,45 @@
 			"productsSold": "Products Sold",
 			"uniqueCustomers": "Unique Customers",
 			"vsPreviousPeriod": "vs previous period",
-			"viewAllOrders": "View All Orders"
+			"viewAllOrders": "View All Orders",
+			"products": {
+				"totalProducts": "Total Products",
+				"lowStock": "Low Stock",
+				"lowStockDescription": "≤5 units",
+				"outOfStock": "Out of Stock",
+				"averagePrice": "Avg. Price",
+				"topFavorited": "Most Favorited",
+				"byGender": "Products by Gender"
+			},
+			"orders": {
+				"byStatus": "Orders by Status",
+				"pending": "Pending",
+				"confirmed": "Confirmed",
+				"shipped": "Shipped",
+				"completed": "Completed",
+				"cancelled": "Cancelled"
+			},
+			"promotions": {
+				"active": "Active Promotions",
+				"totalPromotions": "Total Promotions",
+				"totalUses": "Total Uses",
+				"expiringSoon": "Expiring Soon",
+				"byType": "Promotions by Type"
+			},
+			"reviews": {
+				"totalReviews": "Total Reviews",
+				"averageRating": "Avg. Rating",
+				"withoutReviews": "Without Reviews",
+				"ratingDistribution": "Rating Distribution",
+				"stars": "{{count}} stars"
+			},
+			"customers": {
+				"totalCustomers": "Total Customers",
+				"newCustomers": "New Customers",
+				"repeatRate": "Repeat Rate",
+				"topBuyers": "Top Buyers",
+				"byProvince": "Customers by Province"
+			}
 		},
 		"common": {
 			"noProducts": "No products yet",
@@ -1926,6 +1965,12 @@
 			"unbanDialogDescription": "This will unban {{name}}. They will be able to sign in and access workspaces again.",
 			"removeDialogTitle": "Remove Customer?",
 			"removeDialogDescription": "This will remove {{name}} from this workspace. They will no longer have access to the store.",
+			"promoteToMember": "Promote to Member",
+			"promoteToAdmin": "Promote to Admin",
+			"promoteSuccess": "Customer promoted successfully",
+			"promoteError": "Failed to promote customer",
+			"promoteDialogTitle": "Promote Customer?",
+			"promoteDialogDescription": "This will promote {{name}} to {{role}}. They will have additional permissions in this workspace.",
 			"emptyTitle": "No customers yet",
 			"emptyDescription": "Customers are workspace members with the Viewer role."
 		},
@@ -1944,6 +1989,9 @@
 				"subtotal": "Subtotal",
 				"shippingLabel": "Shipping",
 				"discountLabel": "Discount",
+				"promoCodePlaceholder": "Promo code",
+				"applyPromo": "Apply",
+				"promoApplied": "Applied",
 				"total": "Total",
 				"statusLabel": "Status",
 				"statusPending": "Pending",
@@ -2008,6 +2056,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active on creation",
 				"createButton": "Create Promotion",
@@ -2055,6 +2104,7 @@
 				"clearEndDate": "Clear end date",
 				"usageLimit": "Usage Limit",
 				"usageLimitPlaceholder": "Unlimited",
+				"minimumPurchaseAmount": "Minimum Purchase Amount",
 				"applicableProductsLabel": "Applicable Products",
 				"activeLabel": "Active",
 				"saveButton": "Save Changes",
@@ -2097,7 +2147,10 @@
 				"unknownProduct": "Product",
 				"selectCustomer": "Select a customer...",
 				"unknownCustomer": "Customer",
-				"noCustomers": "No customers found"
+				"noCustomers": "No customers found",
+				"promoCodePlaceholder": "Promo code",
+				"applyPromo": "Apply",
+				"promotionApplied": "Promotion"
 			}
 		}
 	}

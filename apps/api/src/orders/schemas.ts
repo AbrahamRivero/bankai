@@ -21,6 +21,8 @@ export const orderResponseSchema = v.object({
   city: v.string(),
   province: v.string(),
   discount: v.number(),
+  promotionId: v.nullable(v.string()),
+  promotionDiscount: v.number(),
   paymentMethod: v.string(),
   orderStatus: v.string(),
   orderNumber: v.string(),
@@ -49,6 +51,7 @@ export const createOrderSchema = v.object({
   city: v.string(),
   province: v.pipe(v.string(), v.minLength(1)),
   discount: v.optional(v.number()),
+  promotionCode: v.optional(v.string()),
   paymentMethod: v.optional(
     v.union([
       v.literal("usd"),
