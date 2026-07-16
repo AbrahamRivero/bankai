@@ -23,7 +23,9 @@
 			"!**/.cache",
 			"!**/coverage",
 			"!**/.claude",
-			"!**/openapi.json"
+			"!**/openapi.json",
+			"!apps/client/components/ui",
+			"!apps/web/src/components/ui"
 		]
 	},
 	"formatter": {

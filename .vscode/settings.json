@@ -22,6 +22,7 @@
 		"editor.defaultFormatter": "biomejs.biome",
 		"editor.formatOnSave": true
 	},
+	"console-ninja.toolsToAttach": [],
 	"prettier.enable": false,
 	"editor.formatOnSaveMode": "file",
 	"[jsonc]": {

@@ -53,7 +53,11 @@ const isPasswordRegistrationDisabled =
   process.env.DISABLE_PASSWORD_REGISTRATION === "true";
 
 const apiUrl = process.env.KANEO_API_URL || "http://localhost:1337";
-const clientUrl = process.env.KANEO_CLIENT_URL || "http://localhost:5173";
+const clientUrls = (process.env.KANEO_CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((u) => u.trim())
+  .filter(Boolean);
+const clientUrl = clientUrls[0] || "http://localhost:5173";
 const isHttps = apiUrl.startsWith("https://");
 const isCrossSubdomain = (() => {
   try {
@@ -69,7 +73,7 @@ const isCrossSubdomain = (() => {
   }
 })();
 
-const trustedOrigins = [clientUrl];
+const trustedOrigins = [...clientUrls];
 try {
   const apiOrigin = new URL(apiUrl);
   const apiOriginString = `${apiOrigin.protocol}//${apiOrigin.host}`;
@@ -479,9 +483,11 @@ export const auth = betterAuth({
           // Otherwise a fresh instance with DISABLE_REGISTRATION=true
           // could never be set up because `checkRegistrationAllowed`
           // would reject the first user (qodo bot #3).
-          const [{ value: existingUserCount }] = await db
+          const userCountRow = await db
             .select({ value: count() })
-            .from(schema.userTable);
+            .from(schema.userTable)
+            .then((rows) => rows[0]);
+          const existingUserCount = userCountRow?.value ?? 0;
           if (existingUserCount === 0) {
             return;
           }

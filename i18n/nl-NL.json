@@ -149,7 +149,8 @@
 			"oidcError": "Inloggen met OIDC mislukt",
 			"googleError": "Inloggen met Google mislukt",
 			"githubError": "Inloggen met GitHub mislukt",
-			"discordError": "Inloggen met Discord mislukt"
+			"discordError": "Inloggen met Discord mislukt",
+			"instanceStatusError": "Couldn't reach the server. Please retry in a moment."
 		},
 		"providers": {
 			"google": "Google",
@@ -183,6 +184,9 @@
 			"passwordDisabledAlert": "Account aanmaken met wachtwoord is uitgeschakeld. Gebruik een sociale of OIDC-methode.",
 			"signingIn": "Inloggen...",
 			"continueAsGuest": "Doorgaan als gast",
+			"instanceAdminTitle": "Set up your Kaneo instance",
+			"instanceAdminSubtitle": "This account becomes the instance administrator with full access.",
+			"instanceStatusError": "Couldn't reach the server. Please retry in a moment.",
 			"toggleMessage": "Heb je al een account?",
 			"toggleLink": "Inloggen"
 		},

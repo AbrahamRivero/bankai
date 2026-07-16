@@ -150,7 +150,8 @@
 			"oidcError": "Не удалось войти через OIDC",
 			"googleError": "Не удалось войти через Google",
 			"githubError": "Не удалось войти через GitHub",
-			"discordError": "Не удалось войти через Discord"
+			"discordError": "Не удалось войти через Discord",
+			"instanceStatusError": "Couldn't reach the server. Please retry in a moment."
 		},
 		"providers": {
 			"google": "Google",
@@ -184,6 +185,9 @@
 			"passwordDisabledAlert": "Создание аккаунта по паролю отключено. Используйте настроенный метод входа через социальные сети или OIDC на странице входа.",
 			"signingIn": "Вход...",
 			"continueAsGuest": "Продолжить как гость",
+			"instanceAdminTitle": "Set up your Kaneo instance",
+			"instanceAdminSubtitle": "This account becomes the instance administrator with full access.",
+			"instanceStatusError": "Couldn't reach the server. Please retry in a moment.",
 			"toggleMessage": "Уже есть аккаунт?",
 			"toggleLink": "Войти"
 		},

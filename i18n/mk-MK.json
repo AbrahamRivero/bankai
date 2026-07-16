@@ -150,7 +150,8 @@
 			"oidcError": "Неуспешна најава со OIDC",
 			"googleError": "Неуспешна најава со Google",
 			"githubError": "Неуспешна најава со GitHub",
-			"discordError": "Неуспешна најава со Discord"
+			"discordError": "Неуспешна најава со Discord",
+			"instanceStatusError": "Couldn't reach the server. Please retry in a moment."
 		},
 		"providers": {
 			"google": "Google",
@@ -184,6 +185,9 @@
 			"passwordDisabledAlert": "Креирањето сметка со лозинка е оневозможено. Користи социјална или OIDC метода за најава од страницата за најава.",
 			"signingIn": "Се најавува...",
 			"continueAsGuest": "Продолжи како гостин",
+			"instanceAdminTitle": "Set up your Kaneo instance",
+			"instanceAdminSubtitle": "This account becomes the instance administrator with full access.",
+			"instanceStatusError": "Couldn't reach the server. Please retry in a moment.",
 			"toggleMessage": "Веќе имаш сметка?",
 			"toggleLink": "Најави се"
 		},

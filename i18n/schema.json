@@ -595,7 +595,8 @@
 						"oidcError",
 						"googleError",
 						"githubError",
-						"discordError"
+						"discordError",
+						"instanceStatusError"
 					]
 				},
 				"providers": {
@@ -605,11 +606,14 @@
 						"google": {
 							"type": "string"
 						},
+						"github": {
+							"type": "string"
+						},
 						"discord": {
 							"type": "string"
 						}
 					},
-					"required": ["google", "discord"]
+					"required": ["google", "github", "discord"]
 				},
 				"forms": {
 					"type": "object",
@@ -712,6 +716,15 @@
 						"continueAsGuest": {
 							"type": "string"
 						},
+						"instanceAdminTitle": {
+							"type": "string"
+						},
+						"instanceAdminSubtitle": {
+							"type": "string"
+						},
+						"instanceStatusError": {
+							"type": "string"
+						},
 						"toggleMessage": {
 							"type": "string"
 						},
@@ -731,6 +744,9 @@
 						"passwordDisabledAlert",
 						"signingIn",
 						"continueAsGuest",
+						"instanceAdminTitle",
+						"instanceAdminSubtitle",
+						"instanceStatusError",
 						"toggleMessage",
 						"toggleLink"
 					]
