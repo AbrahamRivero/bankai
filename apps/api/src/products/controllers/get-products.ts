@@ -1,9 +1,21 @@
-import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  avg,
+  count,
+  desc,
+  eq,
+  gte,
+  inArray,
+  lte,
+  sql,
+} from "drizzle-orm";
 import db from "../../database";
 import {
   productFavoriteTable,
   productImageTable,
   productTable,
+  reviewTable,
 } from "../../database/schema";
 
 type GetProductsOptions = {
@@ -116,6 +128,30 @@ async function getProducts(options: GetProductsOptions) {
 
   const productIds = products.map((p) => p.id);
 
+  const reviewAggs =
+    productIds.length > 0
+      ? await db
+          .select({
+            productId: reviewTable.productId,
+            reviewCount: count(reviewTable.id),
+            averageRating: avg(reviewTable.rating),
+          })
+          .from(reviewTable)
+          .where(inArray(reviewTable.productId, productIds))
+          .groupBy(reviewTable.productId)
+      : [];
+
+  const reviewMap = new Map<
+    string,
+    { reviewCount: number; averageRating: number | null }
+  >();
+  for (const agg of reviewAggs) {
+    reviewMap.set(agg.productId, {
+      reviewCount: Number(agg.reviewCount),
+      averageRating: agg.averageRating ? Number(agg.averageRating) : null,
+    });
+  }
+
   const images =
     productIds.length > 0
       ? await db
@@ -141,11 +177,16 @@ async function getProducts(options: GetProductsOptions) {
     favoriteSet = new Set(favorites.map((f) => f.productId));
   }
 
-  const mappedProducts = products.map((product) => ({
-    ...product,
-    images: imageMap.get(product.id) ?? [],
-    isFavorite: favoriteSet.has(product.id),
-  }));
+  const mappedProducts = products.map((product) => {
+    const agg = reviewMap.get(product.id);
+    return {
+      ...product,
+      images: imageMap.get(product.id) ?? [],
+      isFavorite: favoriteSet.has(product.id),
+      reviewCount: agg?.reviewCount ?? 0,
+      averageRating: agg?.averageRating ?? null,
+    };
+  });
 
   return {
     products: mappedProducts,

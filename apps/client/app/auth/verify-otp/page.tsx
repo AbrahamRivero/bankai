@@ -84,7 +84,7 @@ export default function VerifyOtp() {
         } else if (invitationId) {
           router.push(`/invitation/accept/${invitationId}`);
         } else {
-          router.push("/dashboard");
+          router.push("/");
         }
       } catch (error) {
         toast.error(

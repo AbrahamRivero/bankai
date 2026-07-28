@@ -1,9 +1,25 @@
 import * as v from "valibot";
 
+export const relatedProductResponseSchema = v.object({
+  id: v.string(),
+  title: v.string(),
+  price: v.number(),
+  compareAtPrice: v.nullable(v.number()),
+  slug: v.string(),
+  stock: v.number(),
+  sizes: v.array(v.string()),
+  gender: v.string(),
+  tags: v.array(v.string()),
+  images: v.array(v.string()),
+  reviewCount: v.number(),
+  averageRating: v.nullable(v.number()),
+});
+
 export const productResponseSchema = v.object({
   id: v.string(),
   title: v.string(),
   price: v.number(),
+  compareAtPrice: v.nullable(v.number()),
   description: v.nullable(v.string()),
   slug: v.string(),
   stock: v.number(),
@@ -12,7 +28,10 @@ export const productResponseSchema = v.object({
   tags: v.array(v.string()),
   userId: v.nullable(v.string()),
   images: v.array(v.string()),
+  relatedProducts: v.array(relatedProductResponseSchema),
   relatedProductIds: v.array(v.string()),
+  reviewCount: v.number(),
+  averageRating: v.nullable(v.number()),
   createdAt: v.date(),
   updatedAt: v.date(),
 });
@@ -27,6 +46,7 @@ export const productListResponseSchema = v.object({
 export const createProductSchema = v.object({
   title: v.pipe(v.string(), v.minLength(1)),
   price: v.optional(v.number()),
+  compareAtPrice: v.optional(v.number()),
   description: v.optional(v.string()),
   slug: v.optional(v.string()),
   stock: v.optional(v.number()),
@@ -49,6 +69,7 @@ export const updateProductSchema = v.partial(createProductSchema);
 
 export const createFavoriteSchema = v.object({
   productId: v.string(),
+  workspaceId: v.string(),
 });
 
 export const paginationSchema = v.object({

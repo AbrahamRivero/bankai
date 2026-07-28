@@ -929,6 +929,7 @@ export const productTable = pgTable(
       .primaryKey(),
     title: text("title").notNull().unique(),
     price: doublePrecision("price").default(0).notNull(),
+    compareAtPrice: doublePrecision("compare_at_price"),
     description: text("description"),
     slug: text("slug").notNull().unique(),
     stock: integer("stock").default(0).notNull(),

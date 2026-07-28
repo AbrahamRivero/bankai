@@ -1620,7 +1620,6 @@
 			"sizes": "Sizes",
 			"images": "Images",
 			"description": "Description",
-			"noImage": "No image",
 			"inStock": "{{count}} in stock",
 			"outOfStock": "Out of stock",
 			"deleteTitle": "Delete Product?",
@@ -1630,6 +1629,14 @@
 			"deleteSuccess": "Product deleted successfully",
 			"deleteError": "Failed to delete product"
 		},
+		"noImage": "No image",
+		"searchFavorites": "Favorieten doorzoeken...",
+		"noFavorites": "Je verlanglijst is leeg",
+		"noFavoritesHint": "Bewaar je favoriete producten om ze gemakkelijk terug te vinden.",
+		"noFavoritesFound": "Geen favorieten gevonden",
+		"noFavoritesFoundHint": "Probeer je zoekopdracht of filters aan te passen.",
+		"addToWishlist": "Toevoegen aan verlanglijst",
+		"removeFromWishlist": "Verwijderen van verlanglijst",
 		"promotions": {
 			"code": "Code",
 			"type": "Type",
@@ -1913,6 +1920,31 @@
 				"applyPromo": "Apply",
 				"promotionApplied": "Promotion"
 			}
-		}
+		},
+		"paymentMethod": "Payment Method",
+		"card": "Card",
+		"usd": "USD",
+		"euro": "Euro",
+		"cup": "CUP",
+		"promotionCode": "Promotion Code",
+		"promotionCodePlaceholder": "Enter code",
+		"notes": "Notes",
+		"notesPlaceholder": "Optional order notes",
+		"trackingNumber": "Tracking Number",
+		"shippingLabel": "Shipping",
+		"productCost": "Subtotal",
+		"subtotal": "Total",
+		"discountLabel": "Discount",
+		"statusPending": "Pending",
+		"statusConfirmed": "Confirmed",
+		"statusShipped": "Shipped",
+		"statusCompleted": "Completed",
+		"statusCancelled": "Cancelled",
+		"cancelOrder": "Cancel order",
+		"cancelOrderTitle": "Bestelling annuleren?",
+		"cancelOrderDescription": "Deze bestelling wordt permanent geannuleerd. Deze actie kan niet ongedaan worden gemaakt.",
+		"keepOrder": "Bestelling behouden",
+		"cancelling": "Annuleren...",
+		"confirmCancel": "Confirm cancellation"
 	}
 }

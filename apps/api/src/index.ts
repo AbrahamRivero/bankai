@@ -493,9 +493,17 @@ export function createApp() {
     if (path.startsWith("/api/mcp") || path.startsWith("/api/.well-known/")) {
       return next();
     }
+
+    const isPublicGetPath =
+      c.req.method === "GET" &&
+      (path.startsWith("/api/products") || path.startsWith("/api/reviews"));
+
     try {
       await authenticateApiRequest(c);
     } catch (error) {
+      if (isPublicGetPath) {
+        return next();
+      }
       if (error instanceof HTTPException) {
         throw error;
       }

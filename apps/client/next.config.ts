@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["better-auth"],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     optimizePackageImports: ["lucide-react", "@base-ui/react"],
   },

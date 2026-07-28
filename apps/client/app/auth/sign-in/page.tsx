@@ -75,7 +75,7 @@ export default function SignIn() {
     if (invitationId) {
       return `${baseUrl}/invitation/accept/${invitationId}`;
     }
-    return `${baseUrl}/dashboard`;
+    return `${baseUrl}/`;
   }, [invitationId, getSafeRedirectPath]);
 
   const handleCustomOAuth = useCallback(async () => {
@@ -174,7 +174,7 @@ export default function SignIn() {
     } else if (invitationId) {
       router.push(`/invitation/accept/${invitationId}`);
     } else {
-      router.push("/dashboard");
+      router.push("/");
     }
   };
 

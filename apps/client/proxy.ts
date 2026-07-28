@@ -7,6 +7,7 @@ const publicPaths = [
   "/auth/sign-up",
   "/auth/verify-otp",
   "/auth/check-email",
+  "/products",
 ];
 
 export function proxy(request: NextRequest) {
@@ -16,7 +17,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow static assets and API routes through
+  if (pathname === "/" || pathname.startsWith("/products")) {
+    return NextResponse.next();
+  }
+
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -37,5 +41,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/dashboard/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

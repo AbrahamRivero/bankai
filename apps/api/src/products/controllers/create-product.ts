@@ -10,6 +10,7 @@ import { publishEvent } from "../../events";
 type CreateProductInput = {
   title: string;
   price?: number;
+  compareAtPrice?: number | null;
   description?: string;
   slug?: string;
   stock?: number;

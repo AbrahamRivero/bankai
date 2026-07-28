@@ -78,6 +78,31 @@ export const createOrderSchema = v.object({
 
 export const updateOrderSchema = v.partial(createOrderSchema);
 
+export const checkoutItemSchema = v.object({
+  productId: v.string(),
+  quantity: v.pipe(v.number(), v.minValue(1)),
+  size: v.optional(v.string()),
+});
+
+export const checkoutSchema = v.object({
+  shippingAddress: v.pipe(v.string(), v.minLength(1)),
+  city: v.pipe(v.string(), v.minLength(1)),
+  province: v.pipe(v.string(), v.minLength(1)),
+  phone: v.optional(v.string()),
+  notes: v.optional(v.string()),
+  paymentMethod: v.optional(
+    v.union([
+      v.literal("usd"),
+      v.literal("euro"),
+      v.literal("cup"),
+      v.literal("card"),
+    ]),
+  ),
+  promotionCode: v.optional(v.string()),
+  items: v.pipe(v.array(checkoutItemSchema), v.minLength(1)),
+  workspaceId: v.string(),
+});
+
 export const orderStatsSchema = v.object({
   period: v.optional(
     v.union([

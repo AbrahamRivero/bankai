@@ -3,7 +3,9 @@ import { Geist_Mono, Inter, Noto_Sans } from "next/font/google";
 import AuthProvider from "@/components/providers/auth-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
+import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CartProvider } from "@/lib/cart-context";
 import { AppI18nProvider } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 import "./globals.css";
@@ -44,7 +46,10 @@ export default function RootLayout({
           <QueryProvider>
             <AuthProvider>
               <AppI18nProvider>
-                {children}
+                <CartProvider>
+                  <SiteHeader />
+                  {children}
+                </CartProvider>
                 <ToastProvider />
               </AppI18nProvider>
             </AuthProvider>

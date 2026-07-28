@@ -1,8 +1,11 @@
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { describeRoute, resolver, validator } from "hono-openapi";
 import * as v from "valibot";
 import { requireWorkspacePermission } from "../utils/require-workspace-permission";
 import { workspaceAccess } from "../utils/workspace-access-middleware";
+import cancelOrder from "./controllers/cancel-order";
+import checkout from "./controllers/checkout";
 import createOrder from "./controllers/create-order";
 import deleteOrder from "./controllers/delete-order";
 import getDashboardSummary from "./controllers/get-dashboard-summary";
@@ -10,6 +13,7 @@ import getOrder from "./controllers/get-order";
 import getOrders from "./controllers/get-orders";
 import updateOrder from "./controllers/update-order";
 import {
+  checkoutSchema,
   createOrderSchema,
   orderResponseSchema,
   orderStatsSchema,
@@ -42,6 +46,32 @@ const orders = new Hono<{ Variables: { userId: string } }>()
       return c.json(order);
     },
   )
+  .post(
+    "/checkout",
+    describeRoute({
+      operationId: "checkout",
+      tags: ["Store"],
+      description: "Customer checkout — create an order from cart",
+      responses: {
+        200: {
+          description: "Order created",
+          content: {
+            "application/json": { schema: resolver(orderResponseSchema) },
+          },
+        },
+      },
+    }),
+    validator("json", checkoutSchema),
+    async (c) => {
+      const input = c.req.valid("json");
+      const userId = c.get("userId");
+      if (!userId) {
+        throw new HTTPException(401, { message: "Unauthorized" });
+      }
+      const order = await checkout({ ...input, userId });
+      return c.json(order);
+    },
+  )
   .get(
     "/",
     describeRoute({
@@ -71,13 +101,12 @@ const orders = new Hono<{ Variables: { userId: string } }>()
     ),
     async (c) => {
       const { workspaceId, limit, offset, customerId } = c.req.valid("query");
-      const result = await getOrders(
-        limit ? Number(limit) : 10,
-        offset ? Number(offset) : 0,
-        undefined,
+      const result = await getOrders({
+        limit: limit ? Number(limit) : 10,
+        offset: offset ? Number(offset) : 0,
         workspaceId,
         customerId,
-      );
+      });
       return c.json(result);
     },
   )
@@ -105,17 +134,39 @@ const orders = new Hono<{ Variables: { userId: string } }>()
         workspaceId: v.string(),
         limit: v.optional(v.string()),
         offset: v.optional(v.string()),
+        orderStatus: v.optional(v.string()),
+        searchterm: v.optional(v.string()),
+        minTotal: v.optional(v.string()),
+        maxTotal: v.optional(v.string()),
+        sortBy: v.optional(v.picklist(["createdAt", "total", "orderNumber"])),
+        sortOrder: v.optional(v.picklist(["asc", "desc"])),
       }),
     ),
     async (c) => {
-      const { workspaceId, limit, offset } = c.req.valid("query");
+      const {
+        workspaceId,
+        limit,
+        offset,
+        orderStatus,
+        searchterm,
+        minTotal,
+        maxTotal,
+        sortBy,
+        sortOrder,
+      } = c.req.valid("query");
       const userId = c.get("userId");
-      const result = await getOrders(
-        limit ? Number(limit) : 10,
-        offset ? Number(offset) : 0,
+      const result = await getOrders({
+        limit: limit ? Number(limit) : 10,
+        offset: offset ? Number(offset) : 0,
         userId,
         workspaceId,
-      );
+        orderStatus,
+        searchterm,
+        minTotal: minTotal ? Number(minTotal) : undefined,
+        maxTotal: maxTotal ? Number(maxTotal) : undefined,
+        sortBy,
+        sortOrder,
+      });
       return c.json(result);
     },
   )
@@ -162,6 +213,38 @@ const orders = new Hono<{ Variables: { userId: string } }>()
       const { id } = c.req.valid("param");
       const userId = c.get("userId");
       const order = await getOrder(id, userId);
+      return c.json(order);
+    },
+  )
+  .post(
+    "/:id/cancel",
+    describeRoute({
+      operationId: "cancelOrder",
+      tags: ["Store"],
+      description: "Cancel own order",
+      responses: {
+        200: {
+          description: "Order cancelled",
+          content: {
+            "application/json": { schema: resolver(orderResponseSchema) },
+          },
+        },
+      },
+    }),
+    validator("param", v.object({ id: v.string() })),
+    validator(
+      "json",
+      v.object({
+        workspaceId: v.string(),
+      }),
+    ),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const userId = c.get("userId");
+      if (!userId) {
+        throw new HTTPException(401, { message: "Unauthorized" });
+      }
+      const order = await cancelOrder(id, userId);
       return c.json(order);
     },
   )

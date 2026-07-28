@@ -1,0 +1,1 @@
+ALTER TABLE "product" ADD COLUMN "compare_at_price" double precision;

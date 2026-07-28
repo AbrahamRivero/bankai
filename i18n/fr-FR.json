@@ -1845,7 +1845,6 @@
 			"sizes": "Sizes",
 			"images": "Images",
 			"description": "Description",
-			"noImage": "No image",
 			"inStock": "{{count}} in stock",
 			"outOfStock": "Out of stock",
 			"deleteTitle": "Delete Product?",
@@ -1855,6 +1854,14 @@
 			"deleteSuccess": "Product deleted successfully",
 			"deleteError": "Failed to delete product"
 		},
+		"noImage": "No image",
+		"searchFavorites": "Rechercher dans les favoris...",
+		"noFavorites": "Votre liste de souhaits est vide",
+		"noFavoritesHint": "Enregistrez vos produits préférés pour les retrouver facilement.",
+		"noFavoritesFound": "Aucun favori trouvé",
+		"noFavoritesFoundHint": "Essayez d'ajuster votre recherche ou vos filtres.",
+		"addToWishlist": "Ajouter à la liste de souhaits",
+		"removeFromWishlist": "Retirer de la liste de souhaits",
 		"promotions": {
 			"code": "Code",
 			"type": "Type",
@@ -2138,6 +2145,31 @@
 				"applyPromo": "Appliquer",
 				"promotionApplied": "Promotion"
 			}
-		}
+		},
+		"paymentMethod": "Payment Method",
+		"card": "Card",
+		"usd": "USD",
+		"euro": "Euro",
+		"cup": "CUP",
+		"promotionCode": "Promotion Code",
+		"promotionCodePlaceholder": "Enter code",
+		"notes": "Notes",
+		"notesPlaceholder": "Optional order notes",
+		"trackingNumber": "Tracking Number",
+		"shippingLabel": "Shipping",
+		"productCost": "Subtotal",
+		"subtotal": "Total",
+		"discountLabel": "Discount",
+		"statusPending": "Pending",
+		"statusConfirmed": "Confirmed",
+		"statusShipped": "Shipped",
+		"statusCompleted": "Completed",
+		"statusCancelled": "Cancelled",
+		"cancelOrder": "Cancel order",
+		"cancelOrderTitle": "Annuler la commande ?",
+		"cancelOrderDescription": "Cette commande sera définitivement annulée. Cette action est irréversible.",
+		"keepOrder": "Conserver la commande",
+		"cancelling": "Annulation en cours...",
+		"confirmCancel": "Confirm cancellation"
 	}
 }

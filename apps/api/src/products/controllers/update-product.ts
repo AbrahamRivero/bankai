@@ -11,6 +11,7 @@ import { publishEvent } from "../../events";
 type UpdateProductInput = {
   title?: string;
   price?: number;
+  compareAtPrice?: number | null;
   description?: string;
   slug?: string;
   stock?: number;

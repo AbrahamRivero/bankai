@@ -29,12 +29,14 @@ export type SignUpFormValues = {
 type SignUpFormProps = {
   invitationId?: string;
   defaultEmail?: string;
+  redirect?: string;
   turnstileToken?: string | null;
 };
 
 export function SignUpForm({
   invitationId,
   defaultEmail,
+  redirect,
   turnstileToken,
 }: SignUpFormProps) {
   const { t } = useTranslation();
@@ -88,7 +90,7 @@ export function SignUpForm({
       if (invitationId) {
         router.push(`/invitation/accept/${invitationId}`);
       } else {
-        router.push("/dashboard");
+        router.push(redirect || "/");
       }
     } catch (error) {
       toast.error(

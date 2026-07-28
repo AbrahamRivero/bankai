@@ -1847,7 +1847,6 @@
 			"sizes": "Sizes",
 			"images": "Images",
 			"description": "Description",
-			"noImage": "No image",
 			"inStock": "{{count}} in stock",
 			"outOfStock": "Out of stock",
 			"deleteTitle": "Delete Product?",
@@ -1857,6 +1856,14 @@
 			"deleteSuccess": "Product deleted successfully",
 			"deleteError": "Failed to delete product"
 		},
+		"noImage": "No image",
+		"searchFavorites": "찜 검색...",
+		"noFavorites": "위시리스트가 비어 있습니다",
+		"noFavoritesHint": "마음에 드는 상품을 저장하여 쉽게 찾아보세요.",
+		"noFavoritesFound": "찜한 상품이 없습니다",
+		"noFavoritesFoundHint": "검색어나 필터를 조정해 보세요.",
+		"addToWishlist": "위시리스트에 추가",
+		"removeFromWishlist": "위시리스트에서 제거",
 		"promotions": {
 			"code": "Code",
 			"type": "Type",
@@ -2140,6 +2147,31 @@
 				"applyPromo": "Apply",
 				"promotionApplied": "Promotion"
 			}
-		}
+		},
+		"paymentMethod": "Payment Method",
+		"card": "Card",
+		"usd": "USD",
+		"euro": "Euro",
+		"cup": "CUP",
+		"promotionCode": "Promotion Code",
+		"promotionCodePlaceholder": "Enter code",
+		"notes": "Notes",
+		"notesPlaceholder": "Optional order notes",
+		"trackingNumber": "Tracking Number",
+		"shippingLabel": "Shipping",
+		"productCost": "Subtotal",
+		"subtotal": "Total",
+		"discountLabel": "Discount",
+		"statusPending": "Pending",
+		"statusConfirmed": "Confirmed",
+		"statusShipped": "Shipped",
+		"statusCompleted": "Completed",
+		"statusCancelled": "Cancelled",
+		"cancelOrder": "Cancel order",
+		"cancelOrderTitle": "주문을 취소할까요?",
+		"cancelOrderDescription": "이 주문은 영구적으로 취소됩니다. 이 작업은 되돌릴 수 없습니다.",
+		"keepOrder": "주문 유지",
+		"cancelling": "취소 중...",
+		"confirmCancel": "Confirm cancellation"
 	}
 }

@@ -33,7 +33,7 @@ import {
 import type { AccessControl } from "better-auth/plugins/access";
 import type { UserWithAnonymous } from "better-auth/plugins/anonymous";
 import { config } from "dotenv-mono";
-import { count, eq, sql } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import db, { schema } from "./database";
 import { publishEvent } from "./events";
 import { checkRegistrationAllowed } from "./utils/check-registration-allowed";
@@ -654,21 +654,59 @@ export const auth = betterAuth({
     after: createAuthMiddleware(async (ctx) => {
       if (ctx.path.startsWith("/sign-up") || ctx.path.startsWith("/sign-in")) {
         const newSession = ctx.context.newSession;
-        if (newSession) {
-          const workspaceMember = await db
-            .select({ workspaceId: schema.workspaceUserTable.workspaceId })
-            .from(schema.workspaceUserTable)
-            .where(eq(schema.workspaceUserTable.userId, newSession.user.id))
-            .limit(1);
+        if (!newSession) return;
 
-          const activeWorkspaceId = workspaceMember[0]?.workspaceId || null;
+        const workspaceMember = await db
+          .select({ workspaceId: schema.workspaceUserTable.workspaceId })
+          .from(schema.workspaceUserTable)
+          .where(eq(schema.workspaceUserTable.userId, newSession.user.id))
+          .limit(1);
 
-          if (activeWorkspaceId) {
-            await db
-              .update(schema.sessionTable)
-              .set({ activeOrganizationId: activeWorkspaceId })
-              .where(eq(schema.sessionTable.id, newSession.session.id));
+        let activeWorkspaceId = workspaceMember[0]?.workspaceId || null;
+
+        if (!activeWorkspaceId) {
+          const defaultWorkspaceId = process.env.DEFAULT_WORKSPACE_ID;
+          if (defaultWorkspaceId) {
+            const workspaceExists = await db
+              .select({ id: schema.workspaceTable.id })
+              .from(schema.workspaceTable)
+              .where(eq(schema.workspaceTable.id, defaultWorkspaceId))
+              .limit(1);
+
+            if (workspaceExists.length > 0) {
+              const existingMembership = await db
+                .select({ id: schema.workspaceUserTable.id })
+                .from(schema.workspaceUserTable)
+                .where(
+                  and(
+                    eq(schema.workspaceUserTable.userId, newSession.user.id),
+                    eq(
+                      schema.workspaceUserTable.workspaceId,
+                      defaultWorkspaceId,
+                    ),
+                  ),
+                )
+                .limit(1);
+
+              if (existingMembership.length === 0) {
+                await db.insert(schema.workspaceUserTable).values({
+                  workspaceId: defaultWorkspaceId,
+                  userId: newSession.user.id,
+                  role: "viewer",
+                  joinedAt: new Date(),
+                });
+              }
+
+              activeWorkspaceId = defaultWorkspaceId;
+            }
           }
+        }
+
+        if (activeWorkspaceId) {
+          await db
+            .update(schema.sessionTable)
+            .set({ activeOrganizationId: activeWorkspaceId })
+            .where(eq(schema.sessionTable.id, newSession.session.id));
         }
       }
     }),

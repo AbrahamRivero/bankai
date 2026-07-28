@@ -270,16 +270,17 @@ function EditOrderModal({ open, onClose, orderId }: EditOrderModalProps) {
       orderItems.map(
         (item: {
           id: string;
-          productId: string;
+          product: { id: string; title: string; price: number } | null;
           quantity: number;
           size: string | null;
         }) => {
-          const product = productMap.get(item.productId);
+          const pid = item.product?.id ?? "";
+          const product = productMap.get(pid);
           return {
-            productId: item.productId,
-            productTitle: product?.title ?? "",
+            productId: pid,
+            productTitle: product?.title ?? item.product?.title ?? "",
             quantity: item.quantity,
-            price: product?.price ?? 0,
+            price: product?.price ?? item.product?.price ?? 0,
           };
         },
       ),

@@ -7,7 +7,7 @@ type LogoProps = {
 
 export function Logo({ className = "" }: LogoProps) {
   return (
-    <Link href="/dashboard" className={`w-auto ${className}`}>
+    <Link href="/" className={`w-auto ${className}`}>
       <Image
         src="/logo-dark.svg"
         alt="Kaneo"

@@ -1,9 +1,10 @@
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { avg, count, desc, eq, inArray, sql } from "drizzle-orm";
 import db from "../../database";
 import {
   productFavoriteTable,
   productImageTable,
   productTable,
+  reviewTable,
 } from "../../database/schema";
 
 async function getMostFavorited(userId?: string, workspaceId?: string) {
@@ -12,6 +13,7 @@ async function getMostFavorited(userId?: string, workspaceId?: string) {
       id: productTable.id,
       title: productTable.title,
       price: productTable.price,
+      compareAtPrice: productTable.compareAtPrice,
       slug: productTable.slug,
       stock: productTable.stock,
       sizes: productTable.sizes,
@@ -29,9 +31,33 @@ async function getMostFavorited(userId?: string, workspaceId?: string) {
     .orderBy(desc(sql`count(${productFavoriteTable.id})`))
     .limit(10);
 
-  if (topFavorites.length === 0) return [];
-
   const topIds = topFavorites.map((p) => p.id);
+
+  const reviewAggs =
+    topIds.length > 0
+      ? await db
+          .select({
+            productId: reviewTable.productId,
+            reviewCount: count(reviewTable.id),
+            averageRating: avg(reviewTable.rating),
+          })
+          .from(reviewTable)
+          .where(inArray(reviewTable.productId, topIds))
+          .groupBy(reviewTable.productId)
+      : [];
+
+  const reviewMap = new Map<
+    string,
+    { reviewCount: number; averageRating: number | null }
+  >();
+  for (const agg of reviewAggs) {
+    reviewMap.set(agg.productId, {
+      reviewCount: Number(agg.reviewCount),
+      averageRating: agg.averageRating ? Number(agg.averageRating) : null,
+    });
+  }
+
+  if (topFavorites.length === 0) return [];
 
   const images = await db
     .select()
@@ -54,12 +80,17 @@ async function getMostFavorited(userId?: string, workspaceId?: string) {
     favoriteSet = new Set(userFavs.map((f) => f.productId));
   }
 
-  return topFavorites.map((product) => ({
-    ...product,
-    images: imageMap.get(product.id) ?? [],
-    isFavorite: favoriteSet.has(product.id),
-    favoritesCount: Number(product.favoritesCount),
-  }));
+  return topFavorites.map((product) => {
+    const agg = reviewMap.get(product.id);
+    return {
+      ...product,
+      images: imageMap.get(product.id) ?? [],
+      isFavorite: favoriteSet.has(product.id),
+      favoritesCount: Number(product.favoritesCount),
+      reviewCount: agg?.reviewCount ?? 0,
+      averageRating: agg?.averageRating ?? null,
+    };
+  });
 }
 
 export default getMostFavorited;

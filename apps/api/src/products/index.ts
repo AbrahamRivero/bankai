@@ -43,7 +43,7 @@ const products = new Hono<{
         },
       },
     }),
-    workspaceAccess.fromQuery("workspaceId"),
+    workspaceAccess.fromQuery("workspaceId", { allowPublic: true }),
     validator("query", paginationSchema),
     async (c) => {
       const query = c.req.valid("query");
@@ -82,7 +82,7 @@ const products = new Hono<{
         },
       },
     }),
-    workspaceAccess.fromQuery("workspaceId"),
+    workspaceAccess.fromQuery("workspaceId", { allowPublic: true }),
     validator("query", v.object({ workspaceId: v.string() })),
     async (c) => {
       const { workspaceId } = c.req.valid("query");
@@ -175,7 +175,7 @@ const products = new Hono<{
         },
       },
     }),
-    workspaceAccess.fromQuery("workspaceId"),
+    workspaceAccess.fromQuery("workspaceId", { allowPublic: true }),
     validator("param", v.object({ term: v.string() })),
     validator("query", v.object({ workspaceId: v.string() })),
     async (c) => {

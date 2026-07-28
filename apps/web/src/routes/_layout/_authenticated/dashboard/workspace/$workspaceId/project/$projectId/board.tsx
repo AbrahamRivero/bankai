@@ -181,7 +181,7 @@ function RouteComponent() {
 
   const boardHeaderSearch = isBoardSearchMounted ? (
     <div
-      className={`relative w-[240px] origin-top transition-all duration-180 ease-out ${
+      className={`relative w-60 origin-top transition-all duration-180 ease-out ${
         isBoardSearchVisible
           ? "translate-y-0 scale-y-100 opacity-100"
           : "pointer-events-none -translate-y-1 scale-y-95 opacity-0"
@@ -203,7 +203,7 @@ function RouteComponent() {
           }
         }}
         placeholder={t("tasks:boardSearchPlaceholder")}
-        className="h-7.5 [&_[data-slot=input]]:h-7 [&_[data-slot=input]]:leading-7 [&_[data-slot=input]]:pl-8 [&_[data-slot=input]]:text-xs [&_[data-slot=input]]:placeholder:text-xs [&_[data-slot=input]]:placeholder:leading-7"
+        className="h-7.5 **:data-[slot=input]:h-7 **:data-[slot=input]:leading-7 **:data-[slot=input]:pl-8 **:data-[slot=input]:text-xs **:data-[slot=input]:placeholder:text-xs **:data-[slot=input]:placeholder:leading-7"
       />
     </div>
   ) : null;

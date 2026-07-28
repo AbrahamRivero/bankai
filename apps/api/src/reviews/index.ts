@@ -74,8 +74,7 @@ const reviews = new Hono<{ Variables: { userId: string } }>()
         },
       },
     }),
-    workspaceAccess.fromQuery("workspaceId"),
-    requireWorkspacePermission({ review: ["read"] }),
+    workspaceAccess.fromQuery("workspaceId", { allowPublic: true }),
     validator("param", v.object({ productId: v.string() })),
     async (c) => {
       const { productId } = c.req.valid("param");

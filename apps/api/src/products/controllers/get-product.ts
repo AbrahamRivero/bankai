@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { avg, count, eq, inArray } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import db from "../../database";
 import {
@@ -6,6 +6,7 @@ import {
   productImageTable,
   productRelatedTable,
   productTable,
+  reviewTable,
 } from "../../database/schema";
 
 async function getProduct(term: string, userId?: string) {
@@ -49,6 +50,49 @@ async function getProduct(term: string, userId?: string) {
       .select()
       .from(productTable)
       .where(inArray(productTable.id, relatedIds));
+
+    const relatedImages = await db
+      .select()
+      .from(productImageTable)
+      .where(inArray(productImageTable.productId, relatedIds));
+
+    const relatedImageMap = new Map<string, string[]>();
+    for (const img of relatedImages) {
+      const existing = relatedImageMap.get(img.productId) ?? [];
+      existing.push(img.url);
+      relatedImageMap.set(img.productId, existing);
+    }
+
+    const relatedReviewAggs = await db
+      .select({
+        productId: reviewTable.productId,
+        reviewCount: count(reviewTable.id),
+        averageRating: avg(reviewTable.rating),
+      })
+      .from(reviewTable)
+      .where(inArray(reviewTable.productId, relatedIds))
+      .groupBy(reviewTable.productId);
+
+    const relatedReviewMap = new Map<
+      string,
+      { reviewCount: number; averageRating: number | null }
+    >();
+    for (const agg of relatedReviewAggs) {
+      relatedReviewMap.set(agg.productId, {
+        reviewCount: Number(agg.reviewCount),
+        averageRating: agg.averageRating ? Number(agg.averageRating) : null,
+      });
+    }
+
+    relatedProducts = relatedProducts.map((rp) => {
+      const revAgg = relatedReviewMap.get(rp.id);
+      return {
+        ...rp,
+        images: relatedImageMap.get(rp.id) ?? [],
+        reviewCount: revAgg?.reviewCount ?? 0,
+        averageRating: revAgg?.averageRating ?? null,
+      };
+    });
   }
 
   let isFavorite = false;
@@ -64,12 +108,24 @@ async function getProduct(term: string, userId?: string) {
     isFavorite = !!fav;
   }
 
+  const [reviewAgg] = await db
+    .select({
+      reviewCount: count(reviewTable.id),
+      averageRating: avg(reviewTable.rating),
+    })
+    .from(reviewTable)
+    .where(eq(reviewTable.productId, product.id));
+
   return {
     ...product,
     images: images.map((img) => img.url),
     relatedProducts,
     relatedProductIds: relatedIds,
     isFavorite,
+    reviewCount: Number(reviewAgg?.reviewCount ?? 0),
+    averageRating: reviewAgg?.averageRating
+      ? Number(reviewAgg.averageRating)
+      : null,
   };
 }
 

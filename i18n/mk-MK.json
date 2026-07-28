@@ -1845,7 +1845,6 @@
 			"sizes": "Sizes",
 			"images": "Images",
 			"description": "Description",
-			"noImage": "No image",
 			"inStock": "{{count}} in stock",
 			"outOfStock": "Out of stock",
 			"deleteTitle": "Delete Product?",
@@ -1855,6 +1854,14 @@
 			"deleteSuccess": "Product deleted successfully",
 			"deleteError": "Failed to delete product"
 		},
+		"noImage": "No image",
+		"searchFavorites": "Пребарувај омилени...",
+		"noFavorites": "Вашата листа на желби е празна",
+		"noFavoritesHint": "Зачувајте ги омилените производи за лесно да ги најдете.",
+		"noFavoritesFound": "Нема пронајдено омилени",
+		"noFavoritesFoundHint": "Обидете се да го прилагодите пребарувањето или филтрите.",
+		"addToWishlist": "Додај во листа на желби",
+		"removeFromWishlist": "Отстрани од листа на желби",
 		"promotions": {
 			"code": "Code",
 			"type": "Type",
@@ -2138,6 +2145,31 @@
 				"applyPromo": "Apply",
 				"promotionApplied": "Promotion"
 			}
-		}
+		},
+		"paymentMethod": "Payment Method",
+		"card": "Card",
+		"usd": "USD",
+		"euro": "Euro",
+		"cup": "CUP",
+		"promotionCode": "Promotion Code",
+		"promotionCodePlaceholder": "Enter code",
+		"notes": "Notes",
+		"notesPlaceholder": "Optional order notes",
+		"trackingNumber": "Tracking Number",
+		"shippingLabel": "Shipping",
+		"productCost": "Subtotal",
+		"subtotal": "Total",
+		"discountLabel": "Discount",
+		"statusPending": "Pending",
+		"statusConfirmed": "Confirmed",
+		"statusShipped": "Shipped",
+		"statusCompleted": "Completed",
+		"statusCancelled": "Cancelled",
+		"cancelOrder": "Cancel order",
+		"cancelOrderTitle": "Откажи нарачка?",
+		"cancelOrderDescription": "Оваа нарачка трајно ќе се откаже. Ова дејство не може да се врати.",
+		"keepOrder": "Задржи нарачка",
+		"cancelling": "Откажување...",
+		"confirmCancel": "Confirm cancellation"
 	}
 }

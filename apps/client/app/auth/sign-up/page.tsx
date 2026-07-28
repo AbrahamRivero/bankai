@@ -54,12 +54,23 @@ export default function SignUp() {
 
   const invitationId = searchParams.get("invitationId") || undefined;
   const prefillEmail = searchParams.get("email") || undefined;
+  const redirectParam = searchParams.get("redirect") || undefined;
   const isInstanceAdminSetup = instanceStatus?.hasUsers === false;
 
+  const getSafeRedirectPath = useCallback(() => {
+    if (redirectParam?.startsWith("/") && !redirectParam.includes("//")) {
+      return redirectParam;
+    }
+    return undefined;
+  }, [redirectParam]);
+
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const safeRedirect = getSafeRedirectPath();
   const callbackURL = invitationId
     ? `${baseUrl}/invitation/accept/${invitationId}`
-    : `${baseUrl}/dashboard`;
+    : safeRedirect
+      ? `${baseUrl}${safeRedirect}`
+      : `${baseUrl}/`;
   const errorCallbackURL = `${baseUrl}/auth/sign-up`;
 
   const handleGuestAccess = async () => {
@@ -71,7 +82,7 @@ export default function SignUp() {
         throw new Error(result.error.message);
       }
       toast.success(t("auth:signIn.guestSuccess"));
-      router.push("/dashboard");
+      router.push(safeRedirect || "/");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : t("auth:signIn.guestError"),
@@ -189,6 +200,7 @@ export default function SignUp() {
             <SignUpForm
               invitationId={invitationId}
               defaultEmail={prefillEmail}
+              redirect={safeRedirect}
               turnstileToken={captchaConfigured ? turnstileToken : undefined}
             />
           )}

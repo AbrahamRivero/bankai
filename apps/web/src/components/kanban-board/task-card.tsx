@@ -229,7 +229,7 @@ function TaskCard({ task }: TaskCardProps) {
 
             <div className="mb-2.5 pr-6">
               <div
-                className="overflow-hidden break-words text-sm leading-5 font-medium text-foreground/95"
+                className="overflow-hidden wrap-break-word text-sm leading-5 font-medium text-foreground/95"
                 style={{
                   display: "-webkit-box",
                   WebkitLineClamp: 3,

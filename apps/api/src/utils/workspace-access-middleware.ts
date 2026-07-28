@@ -24,6 +24,7 @@ type WorkspaceIdSource =
 
 type WorkspaceAccessMiddlewareConfig = {
   sources: WorkspaceIdSource[];
+  allowPublic?: boolean;
 };
 
 async function readJsonObjectBody(
@@ -42,7 +43,7 @@ export function workspaceAccessMiddleware(
   return async (c: Context, next: Next) => {
     const userId = c.get("userId");
 
-    if (!userId) {
+    if (!userId && !config.allowPublic) {
       throw new HTTPException(401, { message: "Unauthorized" });
     }
 
@@ -79,10 +80,12 @@ export function workspaceAccessMiddleware(
       });
     }
 
-    const apiKey = c.get("apiKey");
-    const apiKeyId = apiKey?.id;
+    if (userId) {
+      const apiKey = c.get("apiKey");
+      const apiKeyId = apiKey?.id;
 
-    await validateWorkspaceAccess(userId, workspaceId, apiKeyId);
+      await validateWorkspaceAccess(userId, workspaceId, apiKeyId);
+    }
 
     c.set("workspaceId", workspaceId);
 
@@ -234,8 +237,11 @@ async function lookupWorkspaceId(
 }
 
 export const workspaceAccess = {
-  fromQuery: (key = "workspaceId") =>
-    workspaceAccessMiddleware({ sources: [{ type: "query", key }] }),
+  fromQuery: (key = "workspaceId", options?: { allowPublic?: boolean }) =>
+    workspaceAccessMiddleware({
+      sources: [{ type: "query", key }],
+      allowPublic: options?.allowPublic,
+    }),
 
   fromBody: (key = "workspaceId") =>
     workspaceAccessMiddleware({ sources: [{ type: "body", key }] }),
