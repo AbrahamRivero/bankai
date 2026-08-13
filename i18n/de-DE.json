@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Abbrechen",
 			"close": "Schließen",
@@ -75,7 +75,7 @@
 				"errorToast": "Projekt konnte nicht erstellt werden"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Neuen Workspace erstellen",
 				"description": "Erstelle einen neuen Workspace, indem du einen Namen dafür angibst.",
 				"namePlaceholder": "Workspace-Name",
@@ -1809,6 +1809,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Shop",
 			"insights": "Einblicke",
@@ -2172,6 +2199,11 @@
 		"cancelOrderDescription": "Diese Bestellung wird dauerhaft storniert. Diese Aktion kann nicht rückgängig gemacht werden.",
 		"keepOrder": "Bestellung behalten",
 		"cancelling": "Wird storniert...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "Herren",
+		"genderWomen": "Damen",
+		"genderKid": "Kinder",
+		"genderUnisex": "Unisex"
 	}
 }

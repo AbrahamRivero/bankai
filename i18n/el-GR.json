@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Ακύρωση",
 			"close": "Κλείσιμο",
@@ -75,7 +75,7 @@
 				"errorToast": "Αποτυχία δημιουργίας έργου"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Δημιουργία νέου χώρου εργασίας",
 				"description": "Δημιουργήστε έναν νέο χώρο εργασίας ορίζοντας ένα όνομα.",
 				"namePlaceholder": "Όνομα χώρου εργασίας",
@@ -1807,6 +1807,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Store",
 			"insights": "Insights",
@@ -2170,6 +2197,11 @@
 		"cancelOrderDescription": "Αυτή η παραγγελία θα ακυρωθεί οριστικά. Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.",
 		"keepOrder": "Διατήρηση παραγγελίας",
 		"cancelling": "Ακύρωση...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "Άνδρας",
+		"genderWomen": "Γυναίκα",
+		"genderKid": "Παιδί",
+		"genderUnisex": "Unisex"
 	}
 }

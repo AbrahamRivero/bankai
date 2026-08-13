@@ -1,0 +1,25 @@
+{
+  "name": "@kaneo/load-tests",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "node scripts/setup-fixtures.mjs",
+    "cleanup": "node scripts/cleanup.mjs",
+    "test:api-public": "artillery run scenarios/api-public.yml --output reports/api-public.json",
+    "test:api-auth": "artillery run scenarios/api-auth.yml --output reports/api-auth.json",
+    "test:client": "artillery run scenarios/client-web.yml --output reports/client-web.json",
+    "test:ws": "artillery run scenarios/websocket.yml --output reports/websocket.json",
+    "test:all": "pnpm run test:api-public && pnpm run test:api-auth && pnpm run test:client && pnpm run test:ws",
+    "smoke:api-public": "node scripts/smoke.mjs api-public",
+    "smoke:api-auth": "node scripts/smoke.mjs api-auth",
+    "smoke:client": "node scripts/smoke.mjs client",
+    "smoke:ws": "node scripts/smoke.mjs ws",
+    "smoke:all": "node scripts/smoke.mjs api-public && node scripts/smoke.mjs api-auth && node scripts/smoke.mjs client && node scripts/smoke.mjs ws"
+  },
+  "devDependencies": {
+    "artillery": "^2.0.33",
+    "bcrypt": "^6.0.0",
+    "pg": "^8.20.0"
+  }
+}

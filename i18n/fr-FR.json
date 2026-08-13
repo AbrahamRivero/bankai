@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Annuler",
 			"close": "Fermer",
@@ -75,7 +75,7 @@
 				"errorToast": "Échec de la création du projet"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Créer un nouvel espace de travail",
 				"description": "Créez un nouvel espace de travail en lui donnant un nom.",
 				"namePlaceholder": "Nom de l'espace de travail",
@@ -1807,6 +1807,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Boutique",
 			"insights": "Aper�us",
@@ -2170,6 +2197,11 @@
 		"cancelOrderDescription": "Cette commande sera définitivement annulée. Cette action est irréversible.",
 		"keepOrder": "Conserver la commande",
 		"cancelling": "Annulation en cours...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "Homme",
+		"genderWomen": "Femme",
+		"genderKid": "Enfant",
+		"genderUnisex": "Unisexe"
 	}
 }

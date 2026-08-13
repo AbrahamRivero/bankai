@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Annuleren",
 			"close": "Sluiten",
@@ -74,7 +74,7 @@
 				"errorToast": "Aanmaken van project mislukt"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Een nieuwe werkruimte aanmaken",
 				"description": "Maak een nieuwe werkruimte aan door een naam op te geven.",
 				"namePlaceholder": "Naam werkruimte",
@@ -1582,6 +1582,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Store",
 			"insights": "Insights",
@@ -1945,6 +1972,11 @@
 		"cancelOrderDescription": "Deze bestelling wordt permanent geannuleerd. Deze actie kan niet ongedaan worden gemaakt.",
 		"keepOrder": "Bestelling behouden",
 		"cancelling": "Annuleren...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "Heren",
+		"genderWomen": "Dames",
+		"genderKid": "Kinderen",
+		"genderUnisex": "Unisex"
 	}
 }

@@ -24,7 +24,7 @@ const DEFAULT_FILTERS: CatalogFilters = {
 const PAGE_SIZE = 12;
 
 export function useCatalogFilters(workspaceId: string) {
-  const storageKey = "kaneo:catalog-filters";
+  const storageKey = "bankai:catalog-filters";
 
   const [filters, setFilters] = useState<CatalogFilters>(DEFAULT_FILTERS);
   const [offset, setOffset] = useState(0);

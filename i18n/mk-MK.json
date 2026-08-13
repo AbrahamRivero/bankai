@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Откажи",
 			"close": "Затвори",
@@ -75,7 +75,7 @@
 				"errorToast": "Неуспешно креирање на проект"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Креирај нов работен простор",
 				"description": "Креирај нов работен простор со внесување на име.",
 				"namePlaceholder": "Име на работен простор",
@@ -1807,6 +1807,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Store",
 			"insights": "Insights",
@@ -2170,6 +2197,11 @@
 		"cancelOrderDescription": "Оваа нарачка трајно ќе се откаже. Ова дејство не може да се врати.",
 		"keepOrder": "Задржи нарачка",
 		"cancelling": "Откажување...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "Машки",
+		"genderWomen": "Женски",
+		"genderKid": "Детски",
+		"genderUnisex": "Унисекс"
 	}
 }

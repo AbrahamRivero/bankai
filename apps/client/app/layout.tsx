@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Geist_Mono, Inter, Noto_Sans } from "next/font/google";
 
 import AuthProvider from "@/components/providers/auth-provider";
@@ -10,7 +11,24 @@ import { AppI18nProvider } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: {
+    template: "%s — Bankai Project",
+    default: "Bankai Project",
+  },
+  description:
+    "Premium products at Bankai Project. Discover our curated collection.",
+  icons: {
+    icon: "/favicon.webp",
+  },
+  openGraph: {
+    title: "Bankai Project",
+    description:
+      "Premium products at Bankai Project. Discover our curated collection.",
+    siteName: "Bankai Project",
+    type: "website",
+  },
+};
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],

@@ -35,7 +35,7 @@ type CartContextType = {
   subtotal: number;
 };
 
-const STORAGE_KEY = "kaneo-cart";
+const STORAGE_KEY = "bankai-cart";
 
 function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];

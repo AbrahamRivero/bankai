@@ -1,8 +1,9 @@
 "use client";
 
-import { Package, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { Logo } from "@/components/common/logo";
 import { useAuth } from "@/components/providers/auth-provider/hooks/use-auth";
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,7 @@ export function SiteHeader() {
 
   return (
     <header className="flex h-14 items-center justify-between border-b border-border/40 bg-background px-6">
-      <Link href="/" className="flex items-center gap-2">
-        <Package className="h-5 w-5 text-primary" />
-        <span className="text-lg font-semibold">{t("brand")}</span>
-      </Link>
+      <Logo />
       <div className="flex items-center gap-1">
         {user && (
           <Link

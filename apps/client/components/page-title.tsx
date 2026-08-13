@@ -10,7 +10,7 @@ type PageTitleProps = {
 
 export default function PageTitle({
   title,
-  suffix = "Kaneo",
+  suffix = "Bankai Project",
   hideAppName = false,
 }: PageTitleProps) {
   useEffect(() => {

@@ -1,0 +1,76 @@
+﻿config:
+  target: "http://localhost:1337"
+  processor: "../../helpers/auth.cjs"
+  plugins:
+    ensure: {}
+  phases:
+    - name: "smoke"
+      duration: 8
+      arrivalRate: 2
+  ensure:
+    maxErrorRate: 2
+    thresholds:
+      - "http.response_time.p95": 1000
+scenarios:
+  - name: "read-user-data"
+    weight: 5
+    flow:
+      - function: "setAuth"
+      - get:
+          url: "/api/orders/user-orders?workspaceId={{ workspaceId }}"
+          name: "user-orders"
+          headers:
+            Authorization: "{{ auth }}"
+      - get:
+          url: "/api/products/{{ slug }}?workspaceId={{ workspaceId }}"
+          name: "product-detail"
+          headers:
+            Authorization: "{{ auth }}"
+  - name: "checkout"
+    weight: 3
+    flow:
+      - function: "setAuth"
+      - post:
+          url: "/api/orders/checkout"
+          name: "checkout"
+          headers:
+            Authorization: "{{ auth }}"
+          json:
+            shippingAddress: "Calle de Prueba 123, entre 10 y 12"
+            city: "La Habana"
+            province: "La Habana"
+            phone: "+53 7 000 0000"
+            paymentMethod: "cup"
+            items:
+              - productId: "{{ productId }}"
+                quantity: 1
+                size: "M"
+            workspaceId: "{{ workspaceId }}"
+      - get:
+          url: "/api/products/{{ slug }}?workspaceId={{ workspaceId }}"
+          name: "product-detail"
+          headers:
+            Authorization: "{{ auth }}"
+  - name: "favorites"
+    weight: 2
+    flow:
+      - function: "setAuth"
+      - get:
+          url: "/api/products/favorites?workspaceId={{ workspaceId }}"
+          name: "list-favorites"
+          headers:
+            Authorization: "{{ auth }}"
+      - post:
+          url: "/api/products/favorites"
+          name: "add-favorite"
+          headers:
+            Authorization: "{{ auth }}"
+          json:
+            productId: "{{ productId }}"
+            workspaceId: "{{ workspaceId }}"
+      - delete:
+          url: "/api/products/favorites/{{ productId }}?workspaceId={{ workspaceId }}"
+          name: "remove-favorite"
+          headers:
+            Authorization: "{{ auth }}"
+

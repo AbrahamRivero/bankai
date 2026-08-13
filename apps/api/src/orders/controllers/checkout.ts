@@ -4,6 +4,7 @@ import db from "../../database";
 import {
   orderItemTable,
   orderTable,
+  productTable,
   promotionTable,
 } from "../../database/schema";
 import { publishEvent } from "../../events";

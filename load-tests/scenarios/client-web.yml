@@ -1,0 +1,43 @@
+﻿config:
+  target: "http://localhost:3000"
+  processor: "../helpers/auth.cjs"
+  plugins:
+    ensure: {}
+  phases:
+    - name: "warmup"
+      duration: 20
+      arrivalRate: 5
+    - name: "ramp"
+      duration: 60
+      arrivalRate: 5
+      rampTo: 60
+    - name: "peak"
+      duration: 90
+      arrivalRate: 60
+  ensure:
+    maxErrorRate: 2
+    thresholds:
+      - "http.response_time.p95": 2500
+scenarios:
+  - name: "browse"
+    weight: 8
+    flow:
+      - function: "setPublicVars"
+      - get:
+          url: "/"
+          name: "home"
+      - get:
+          url: "/products"
+          name: "products-page"
+      - get:
+          url: "/products/{{ slug }}"
+          name: "product-page"
+      - get:
+          url: "/api/products?workspaceId={{ workspaceId }}"
+          name: "api-via-rewrite"
+  - name: "auth-gate"
+    weight: 2
+    flow:
+      - get:
+          url: "/orders"
+          name: "auth-gate-redirect"

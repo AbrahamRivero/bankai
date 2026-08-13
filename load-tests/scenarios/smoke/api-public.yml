@@ -1,0 +1,40 @@
+﻿config:
+  target: "http://localhost:1337"
+  processor: "../../helpers/auth.cjs"
+  plugins:
+    ensure: {}
+  phases:
+    - name: "smoke"
+      duration: 8
+      arrivalRate: 2
+  ensure:
+    maxErrorRate: 2
+    thresholds:
+      - "http.response_time.p95": 800
+scenarios:
+  - name: "browse"
+    weight: 8
+    flow:
+      - function: "setPublicVars"
+      - get:
+          url: "/api/health"
+          name: "health"
+      - get:
+          url: "/api/products?workspaceId={{ workspaceId }}"
+          name: "products-list"
+      - get:
+          url: "/api/products/{{ slug }}?workspaceId={{ workspaceId }}"
+          name: "product-detail"
+      - get:
+          url: "/api/reviews/product/{{ productId }}?workspaceId={{ workspaceId }}"
+          name: "product-reviews"
+  - name: "instance"
+    weight: 1
+    flow:
+      - get:
+          url: "/api/instance/status"
+          name: "instance-status"
+      - get:
+          url: "/api/config"
+          name: "config"
+

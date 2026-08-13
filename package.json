@@ -13,7 +13,14 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "test:integration": "turbo test:integration",
-    "prepare": "husky"
+    "prepare": "husky",
+    "load:test:setup": "pnpm --filter @kaneo/load-tests setup",
+    "load:test:cleanup": "pnpm --filter @kaneo/load-tests cleanup",
+    "load:test:api-public": "pnpm --filter @kaneo/load-tests test:api-public",
+    "load:test:api-auth": "pnpm --filter @kaneo/load-tests test:api-auth",
+    "load:test:client": "pnpm --filter @kaneo/load-tests test:client",
+    "load:test:ws": "pnpm --filter @kaneo/load-tests test:ws",
+    "load:test:all": "pnpm --filter @kaneo/load-tests test:all"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.8",

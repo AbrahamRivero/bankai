@@ -10,7 +10,7 @@ export const client = hc<AppType>("/api", {
       headers: {
         ...init?.headers,
         "Content-Type": "application/json",
-        "X-Kaneo-Window-Id": windowId,
+        "X-Bankai-Window-Id": windowId,
       },
       credentials: "include",
     }).catch((error) => {

@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "취소",
 			"close": "닫기",
@@ -75,7 +75,7 @@
 				"errorToast": "프로젝트 생성에 실패했습니다"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "새 워크스페이스 만들기",
 				"description": "워크스페이스 이름을 지정하여 새 워크스페이스를 만듭니다.",
 				"namePlaceholder": "워크스페이스 이름",
@@ -1809,6 +1809,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Store",
 			"insights": "Insights",
@@ -2172,6 +2199,11 @@
 		"cancelOrderDescription": "이 주문은 영구적으로 취소됩니다. 이 작업은 되돌릴 수 없습니다.",
 		"keepOrder": "주문 유지",
 		"cancelling": "취소 중...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "남성",
+		"genderWomen": "여성",
+		"genderKid": "아동",
+		"genderUnisex": "남녀공용"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Скасувати",
 			"close": "Закрити",
@@ -75,7 +75,7 @@
 				"errorToast": "Не вдалося створити проєкт"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Створити новий робочий простір",
 				"description": "Створіть новий робочий простір, вказавши його назву.",
 				"namePlaceholder": "Назва робочого простору",
@@ -1808,6 +1808,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Store",
 			"insights": "Insights",
@@ -2171,6 +2198,11 @@
 		"cancelOrderDescription": "Це замовлення буде остаточно скасовано. Цю дію не можна скасувати.",
 		"keepOrder": "Залишити замовлення",
 		"cancelling": "Скасування...",
-		"confirmCancel": "Confirm cancellation"
+		"confirmCancel": "Confirm cancellation",
+		"allGenders": "All Genders",
+		"genderMen": "Чоловічий",
+		"genderWomen": "Жіночий",
+		"genderKid": "Дитячий",
+		"genderUnisex": "Унісекс"
 	}
 }

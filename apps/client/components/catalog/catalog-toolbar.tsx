@@ -4,6 +4,7 @@ import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -29,10 +30,10 @@ type CatalogToolbarProps = {
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 const GENDERS = [
-  { value: "men", key: "modals.createProduct.genderMen" },
-  { value: "women", key: "modals.createProduct.genderWomen" },
-  { value: "kid", key: "modals.createProduct.genderKid" },
-  { value: "unisex", key: "modals.createProduct.genderUnisex" },
+  { value: "men", key: "genderMen" },
+  { value: "women", key: "genderWomen" },
+  { value: "kid", key: "genderKid" },
+  { value: "unisex", key: "genderUnisex" },
 ];
 const SORT_OPTIONS = [
   { value: "price_asc", key: "sortPriceAsc" },
@@ -124,7 +125,13 @@ function FilterContent({
           onValueChange={(value) => onUpdateFilter("sortBy", value || null)}
         >
           <SelectTrigger className="h-8 text-xs">
-            <SelectValue placeholder={t("sortBy")} />
+            <SelectValue>
+              {(value: string | null) => {
+                if (!value) return t("sortBy");
+                const option = SORT_OPTIONS.find((s) => s.value === value);
+                return option ? t(option.key) : value;
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t("sortDefault")}</SelectItem>
@@ -145,7 +152,13 @@ function FilterContent({
           onValueChange={(value) => onUpdateFilter("gender", value || null)}
         >
           <SelectTrigger className="h-8 text-xs">
-            <SelectValue placeholder={t("allGenders")} />
+            <SelectValue>
+              {(value: string | null) => {
+                if (!value) return t("allGenders");
+                const option = GENDERS.find((g) => g.value === value);
+                return option ? t(option.key) : value;
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t("allGenders")}</SelectItem>
@@ -221,13 +234,7 @@ function FilterContent({
                   : "text-foreground hover:bg-muted",
               )}
             >
-              <div
-                className={cn(
-                  "h-3.5 w-3.5 rounded border border-border",
-                  filters.availability === opt.value &&
-                    "border-primary bg-primary",
-                )}
-              />
+              <Checkbox checked={filters.availability === opt.value} readOnly />
               {t(opt.key)}
             </button>
           ))}

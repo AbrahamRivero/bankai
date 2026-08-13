@@ -1,0 +1,26 @@
+﻿config:
+  target: "ws://localhost:1337"
+  processor: "../helpers/auth.cjs"
+  plugins:
+    ensure: {}
+  phases:
+    - name: "warmup"
+      duration: 15
+      arrivalRate: 5
+    - name: "ramp"
+      duration: 60
+      arrivalRate: 5
+      rampTo: 60
+    - name: "sustain"
+      duration: 60
+      arrivalRate: 60
+  ensure:
+    maxErrorRate: 2
+scenarios:
+  - engine: "ws"
+    name: "workspace-ws"
+    flow:
+      - connect:
+          function: "wsConnect"
+          id: "ws-{{ $randomString() }}"
+      - think: 45

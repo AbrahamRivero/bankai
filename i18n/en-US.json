@@ -1,6 +1,6 @@
 {
 	"common": {
-		"appName": "Kaneo",
+		"appName": "Bankai Project",
 		"actions": {
 			"cancel": "Cancel",
 			"close": "Close",
@@ -75,7 +75,7 @@
 				"errorToast": "Failed to create project"
 			},
 			"createWorkspace": {
-				"breadcrumbKaneo": "KANEO",
+				"breadcrumbKaneo": "BANKAI PROJECT",
 				"title": "Create a new workspace",
 				"description": "Create a new workspace by providing a name for your workspace.",
 				"namePlaceholder": "Workspace name",
@@ -1823,6 +1823,33 @@
 		}
 	},
 	"store": {
+		"brand": "Bankai Project",
+		"meta": {
+			"home": {
+				"title": "Premium Products",
+				"description": "Discover premium products at Bankai Project. Shop our curated collection."
+			},
+			"products": {
+				"title": "Products",
+				"description": "Browse our catalog of premium products at Bankai Project."
+			},
+			"productDetail": {
+				"title": "{{productName}}",
+				"description": "Buy {{productName}} at Bankai Project. Premium quality and fast shipping."
+			},
+			"signIn": {
+				"title": "Sign In"
+			},
+			"signUp": {
+				"title": "Sign Up"
+			},
+			"checkEmail": {
+				"title": "Check Your Email"
+			},
+			"verifyOtp": {
+				"title": "Verify OTP"
+			}
+		},
 		"sidebar": {
 			"title": "Store",
 			"insights": "Insights",
@@ -2207,6 +2234,10 @@
 		"clearAll": "Clear All",
 		"searchPlaceholder": "Search products...",
 		"allGenders": "All Genders",
+		"genderMen": "Men",
+		"genderWomen": "Women",
+		"genderKid": "Kid",
+		"genderUnisex": "Unisex",
 		"priceRange": "Price Range",
 		"min": "Min",
 		"max": "Max",
@@ -2293,7 +2324,7 @@
 		"toggleTheme": "Toggle theme",
 		"userFallback": "User",
 		"loading": "Loading...",
-		"brandName": "Kaneo",
+		"brandName": "Bankai Project",
 		"cart": "Cart",
 		"cartEmpty": "Your cart is empty",
 		"cartEmptyHint": "Add some products to get started.",
