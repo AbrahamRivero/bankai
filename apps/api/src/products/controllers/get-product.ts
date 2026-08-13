@@ -1,4 +1,4 @@
-import { avg, count, eq, inArray } from "drizzle-orm";
+import { and, avg, count, eq, inArray } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import db from "../../database";
 import {
@@ -101,8 +101,10 @@ async function getProduct(term: string, userId?: string) {
       .select()
       .from(productFavoriteTable)
       .where(
-        eq(productFavoriteTable.userId, userId) &&
+        and(
+          eq(productFavoriteTable.userId, userId),
           eq(productFavoriteTable.productId, product.id),
+        ),
       )
       .limit(1);
     isFavorite = !!fav;
