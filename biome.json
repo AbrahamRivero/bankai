@@ -24,6 +24,7 @@
 			"!**/coverage",
 			"!**/.claude",
 			"!**/openapi.json",
+			"!**/load-tests/reports",
 			"!apps/client/components/ui",
 			"!apps/web/src/components/ui"
 		]

@@ -20,7 +20,9 @@
     "load:test:api-auth": "pnpm --filter @kaneo/load-tests test:api-auth",
     "load:test:client": "pnpm --filter @kaneo/load-tests test:client",
     "load:test:ws": "pnpm --filter @kaneo/load-tests test:ws",
-    "load:test:all": "pnpm --filter @kaneo/load-tests test:all"
+    "load:test:all": "pnpm --filter @kaneo/load-tests test:all",
+    "cluster:start": "node ./scripts/start-cluster.mjs",
+    "cluster:stop": "node ./scripts/start-cluster.mjs --stop"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.8",

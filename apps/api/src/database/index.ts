@@ -179,7 +179,7 @@ export function getDatabasePool(): Pool {
       // indefinitely and blocking every API request.
       connectionTimeoutMillis: 5_000,
       idleTimeoutMillis: 30_000,
-      max: 10,
+      max: Number(process.env.DATABASE_POOL_MAX ?? 10),
     });
   }
 

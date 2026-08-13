@@ -32,29 +32,64 @@ async function getProduct(term: string, userId?: string) {
     });
   }
 
-  const images = await db
-    .select()
-    .from(productImageTable)
-    .where(eq(productImageTable.productId, product.id));
+  const [images, relatedRows, favoriteRows, reviewAggRows] = await Promise.all([
+    db
+      .select()
+      .from(productImageTable)
+      .where(eq(productImageTable.productId, product.id)),
+    db
+      .select({ relatedProductId: productRelatedTable.relatedProductId })
+      .from(productRelatedTable)
+      .where(eq(productRelatedTable.productId, product.id)),
+    userId
+      ? db
+          .select()
+          .from(productFavoriteTable)
+          .where(
+            and(
+              eq(productFavoriteTable.userId, userId),
+              eq(productFavoriteTable.productId, product.id),
+            ),
+          )
+          .limit(1)
+      : Promise.resolve([]),
+    db
+      .select({
+        reviewCount: count(reviewTable.id),
+        averageRating: avg(reviewTable.rating),
+      })
+      .from(reviewTable)
+      .where(eq(reviewTable.productId, product.id)),
+  ]);
 
-  const relatedRows = await db
-    .select({ relatedProductId: productRelatedTable.relatedProductId })
-    .from(productRelatedTable)
-    .where(eq(productRelatedTable.productId, product.id));
-
+  const isFavorite = favoriteRows.length > 0;
+  const reviewAgg = reviewAggRows[0];
   const relatedIds = relatedRows.map((r) => r.relatedProductId);
   let relatedProducts: Array<Record<string, unknown>> = [];
 
   if (relatedIds.length > 0) {
-    relatedProducts = await db
-      .select()
-      .from(productTable)
-      .where(inArray(productTable.id, relatedIds));
+    const [relatedRowsResult, relatedImages, relatedReviewAggs] =
+      await Promise.all([
+        db
+          .select()
+          .from(productTable)
+          .where(inArray(productTable.id, relatedIds)),
+        db
+          .select()
+          .from(productImageTable)
+          .where(inArray(productImageTable.productId, relatedIds)),
+        db
+          .select({
+            productId: reviewTable.productId,
+            reviewCount: count(reviewTable.id),
+            averageRating: avg(reviewTable.rating),
+          })
+          .from(reviewTable)
+          .where(inArray(reviewTable.productId, relatedIds))
+          .groupBy(reviewTable.productId),
+      ]);
 
-    const relatedImages = await db
-      .select()
-      .from(productImageTable)
-      .where(inArray(productImageTable.productId, relatedIds));
+    relatedProducts = relatedRowsResult;
 
     const relatedImageMap = new Map<string, string[]>();
     for (const img of relatedImages) {
@@ -62,16 +97,6 @@ async function getProduct(term: string, userId?: string) {
       existing.push(img.url);
       relatedImageMap.set(img.productId, existing);
     }
-
-    const relatedReviewAggs = await db
-      .select({
-        productId: reviewTable.productId,
-        reviewCount: count(reviewTable.id),
-        averageRating: avg(reviewTable.rating),
-      })
-      .from(reviewTable)
-      .where(inArray(reviewTable.productId, relatedIds))
-      .groupBy(reviewTable.productId);
 
     const relatedReviewMap = new Map<
       string,
@@ -94,29 +119,6 @@ async function getProduct(term: string, userId?: string) {
       };
     });
   }
-
-  let isFavorite = false;
-  if (userId) {
-    const [fav] = await db
-      .select()
-      .from(productFavoriteTable)
-      .where(
-        and(
-          eq(productFavoriteTable.userId, userId),
-          eq(productFavoriteTable.productId, product.id),
-        ),
-      )
-      .limit(1);
-    isFavorite = !!fav;
-  }
-
-  const [reviewAgg] = await db
-    .select({
-      reviewCount: count(reviewTable.id),
-      averageRating: avg(reviewTable.rating),
-    })
-    .from(reviewTable)
-    .where(eq(reviewTable.productId, product.id));
 
   return {
     ...product,

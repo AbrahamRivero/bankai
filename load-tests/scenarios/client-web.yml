@@ -1,6 +1,9 @@
 ﻿config:
   target: "http://localhost:3000"
   processor: "../helpers/auth.cjs"
+  http:
+    pool: 100
+    keepAlive: true
   plugins:
     ensure: {}
   phases:

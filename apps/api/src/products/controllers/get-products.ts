@@ -1,5 +1,6 @@
 import {
   and,
+  arrayOverlaps,
   asc,
   avg,
   count,
@@ -75,6 +76,16 @@ async function getProducts(options: GetProductsOptions) {
     conditions.push(sql`${productTable.title} ILIKE ${`%${searchterm}%`}`);
   }
 
+  if (sizes) {
+    const sizeArray = Array.isArray(sizes) ? sizes : [sizes];
+    conditions.push(arrayOverlaps(productTable.sizes, sizeArray));
+  }
+
+  if (tags) {
+    const tagArray = Array.isArray(tags) ? tags : [tags];
+    conditions.push(arrayOverlaps(productTable.tags, tagArray));
+  }
+
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
   let orderBy = asc(productTable.title);
@@ -100,37 +111,23 @@ async function getProducts(options: GetProductsOptions) {
       break;
   }
 
-  let products = await db
-    .select()
-    .from(productTable)
-    .where(where)
-    .orderBy(orderBy)
-    .limit(limit)
-    .offset(offset);
+  const [products, totalResult] = await Promise.all([
+    db
+      .select()
+      .from(productTable)
+      .where(where)
+      .orderBy(orderBy)
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`count(*)` }).from(productTable).where(where),
+  ]);
 
-  if (sizes) {
-    const sizeArray = Array.isArray(sizes) ? sizes : [sizes];
-    products = products.filter((p) =>
-      sizeArray.some((s) => p.sizes.includes(s)),
-    );
-  }
-
-  if (tags) {
-    const tagArray = Array.isArray(tags) ? tags : [tags];
-    products = products.filter((p) => tagArray.some((t) => p.tags.includes(t)));
-  }
-
-  const total = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(productTable)
-    .where(where)
-    .then((r) => Number(r?.[0]?.count ?? 0));
-
+  const total = Number(totalResult?.[0]?.count ?? 0);
   const productIds = products.map((p) => p.id);
 
-  const reviewAggs =
+  const [reviewAggs, images, favorites] = await Promise.all([
     productIds.length > 0
-      ? await db
+      ? db
           .select({
             productId: reviewTable.productId,
             reviewCount: count(reviewTable.id),
@@ -139,7 +136,20 @@ async function getProducts(options: GetProductsOptions) {
           .from(reviewTable)
           .where(inArray(reviewTable.productId, productIds))
           .groupBy(reviewTable.productId)
-      : [];
+      : Promise.resolve([]),
+    productIds.length > 0
+      ? db
+          .select()
+          .from(productImageTable)
+          .where(inArray(productImageTable.productId, productIds))
+      : Promise.resolve([]),
+    userId
+      ? db
+          .select()
+          .from(productFavoriteTable)
+          .where(eq(productFavoriteTable.userId, userId))
+      : Promise.resolve([]),
+  ]);
 
   const reviewMap = new Map<
     string,
@@ -152,14 +162,6 @@ async function getProducts(options: GetProductsOptions) {
     });
   }
 
-  const images =
-    productIds.length > 0
-      ? await db
-          .select()
-          .from(productImageTable)
-          .where(inArray(productImageTable.productId, productIds))
-      : [];
-
   const imageMap = new Map<string, string[]>();
   for (const img of images) {
     const existing = imageMap.get(img.productId) ?? [];
@@ -167,15 +169,7 @@ async function getProducts(options: GetProductsOptions) {
     imageMap.set(img.productId, existing);
   }
 
-  let favoriteSet = new Set<string>();
-  if (userId) {
-    const favorites = await db
-      .select()
-      .from(productFavoriteTable)
-      .where(eq(productFavoriteTable.userId, userId));
-
-    favoriteSet = new Set(favorites.map((f) => f.productId));
-  }
+  const favoriteSet = new Set(favorites.map((f) => f.productId));
 
   const mappedProducts = products.map((product) => {
     const agg = reviewMap.get(product.id);

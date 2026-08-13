@@ -925,7 +925,8 @@ const isMainModule =
   import.meta.url === pathToFileURL(process.argv[1]).href;
 
 if (isMainModule) {
-  void startServer(injectWebSocket);
+  const port = process.env.PORT ? Number(process.env.PORT) : undefined;
+  void startServer(injectWebSocket, port);
 }
 
 export type AppType =
