@@ -489,6 +489,10 @@ export const orderTableRelations = relations(orderTable, ({ one, many }) => ({
     fields: [orderTable.promotionId],
     references: [promotionTable.id],
   }),
+  currencyRate: one(currencyCacheTable, {
+    fields: [orderTable.currencyRateId],
+    references: [currencyCacheTable.id],
+  }),
 }));
 
 export const promotionTableRelations = relations(
@@ -526,5 +530,7 @@ export const promotionProductTableRelations = relations(
 
 export const currencyCacheTableRelations = relations(
   currencyCacheTable,
-  () => ({}),
+  ({ many }) => ({
+    orders: many(orderTable),
+  }),
 );

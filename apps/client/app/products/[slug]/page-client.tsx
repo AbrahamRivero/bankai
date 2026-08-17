@@ -18,6 +18,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useGetProduct from "@/hooks/queries/store/use-get-product";
 import useGetReviews from "@/hooks/queries/store/use-get-reviews";
 import { useCart } from "@/lib/cart-context";
+import { convertPrice, formatPrice } from "@/lib/currency";
+import { useCurrencyStore } from "@/lib/currency-store";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_WORKSPACE_ID = process.env.NEXT_PUBLIC_DEFAULT_WORKSPACE_ID;
@@ -38,6 +40,8 @@ export default function ProductDetailClient() {
     product?.id ?? "",
     workspaceId,
   );
+  const currency = useCurrencyStore((state) => state.currency);
+  const rates = useCurrencyStore((state) => state.rates);
 
   if (!DEFAULT_WORKSPACE_ID) {
     return (
@@ -134,7 +138,10 @@ export default function ProductDetailClient() {
 
             <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center">
               <span className="text-2xl font-bold">
-                ${product.price.toFixed(2)}
+                {formatPrice(
+                  convertPrice(product.price, rates, currency),
+                  currency,
+                )}
               </span>
               <div className="flex items-center gap-2 sm:border-l sm:border-border sm:pl-4">
                 <StarRating

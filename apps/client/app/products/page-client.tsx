@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/pagination";
 import useGetProducts from "@/hooks/queries/store/use-get-products";
 import { useCatalogFilters } from "@/hooks/use-catalog-filters";
+import { useCurrencyStore } from "@/lib/currency-store";
 
 const DEFAULT_WORKSPACE_ID = process.env.NEXT_PUBLIC_DEFAULT_WORKSPACE_ID;
 
@@ -33,6 +34,7 @@ export default function ProductsClient() {
     handlePageChange,
     pageSize,
   } = useCatalogFilters(workspaceId);
+  const currency = useCurrencyStore((state) => state.currency);
 
   const { data, isLoading, isError, error } = useGetProducts(queryParams);
   const currentPage = data ? Math.floor((data.offset || 0) / pageSize) + 1 : 1;
@@ -146,7 +148,7 @@ export default function ProductsClient() {
                 )}
                 {filters.minPrice && (
                   <span className="inline-flex h-6 items-center gap-1 rounded-md border border-border bg-background px-2 text-[11px] text-muted-foreground">
-                    {t("filterChipMin")} ${filters.minPrice}
+                    {t("filterChipMin")} {filters.minPrice} {currency}
                     <button
                       type="button"
                       onClick={() => updateFilter("minPrice", "")}
@@ -158,7 +160,7 @@ export default function ProductsClient() {
                 )}
                 {filters.maxPrice && (
                   <span className="inline-flex h-6 items-center gap-1 rounded-md border border-border bg-background px-2 text-[11px] text-muted-foreground">
-                    {t("filterChipMax")} ${filters.maxPrice}
+                    {t("filterChipMax")} {filters.maxPrice} {currency}
                     <button
                       type="button"
                       onClick={() => updateFilter("maxPrice", "")}

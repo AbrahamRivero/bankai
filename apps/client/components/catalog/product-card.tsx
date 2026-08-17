@@ -9,6 +9,8 @@ import { useAuth } from "@/components/providers/auth-provider/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { useToggleFavorite } from "@/hooks/mutations/use-toggle-favorite";
 import { useCart } from "@/lib/cart-context";
+import { convertPrice, formatPrice } from "@/lib/currency";
+import { useCurrencyStore } from "@/lib/currency-store";
 import { cn } from "@/lib/utils";
 import StarRating from "./star-rating";
 
@@ -45,7 +47,14 @@ function ProductCard({
   const { user } = useAuth();
   const toggleFavorite = useToggleFavorite();
   const { addItem } = useCart();
+  const currency = useCurrencyStore((state) => state.currency);
+  const rates = useCurrencyStore((state) => state.rates);
   const router = useRouter();
+  const displayPrice = convertPrice(price, rates, currency);
+  const displayCompareAt =
+    compareAtPrice != null
+      ? convertPrice(compareAtPrice, rates, currency)
+      : null;
 
   const handleRequireAuth = () => {
     if (!user) {
@@ -134,11 +143,11 @@ function ProductCard({
 
         <div className="flex items-baseline gap-2">
           <span className="text-lg font-semibold text-foreground">
-            ${price.toFixed(2)}
+            {formatPrice(displayPrice, currency)}
           </span>
-          {isOnSale && (
+          {isOnSale && displayCompareAt != null && (
             <span className="text-sm text-muted-foreground line-through">
-              ${compareAtPrice?.toFixed(2)}
+              {formatPrice(displayCompareAt, currency)}
             </span>
           )}
         </div>

@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm";
 import db from "../../database";
 import {
+  currencyCacheTable,
   orderItemTable,
   orderTable,
   productTable,
@@ -79,6 +80,12 @@ async function getOrders(options: GetOrdersOptions = {}) {
       province: orderTable.province,
       discount: orderTable.discount,
       paymentMethod: orderTable.paymentMethod,
+      currencyRateId: orderTable.currencyRateId,
+      totalInCurrency: orderTable.totalInCurrency,
+      currencyRate: {
+        currencyCode: currencyCacheTable.currencyCode,
+        rate: currencyCacheTable.rate,
+      },
       orderStatus: orderTable.orderStatus,
       orderNumber: orderTable.orderNumber,
       trackingNumber: orderTable.trackingNumber,
@@ -95,6 +102,10 @@ async function getOrders(options: GetOrdersOptions = {}) {
     })
     .from(orderTable)
     .leftJoin(userTable, eq(orderTable.customerId, userTable.id))
+    .leftJoin(
+      currencyCacheTable,
+      eq(orderTable.currencyRateId, currencyCacheTable.id),
+    )
     .where(where)
     .orderBy(orderBy)
     .limit(limit)

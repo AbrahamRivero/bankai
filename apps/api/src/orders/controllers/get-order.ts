@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import db from "../../database";
 import {
+  currencyCacheTable,
   orderItemTable,
   orderTable,
   productImageTable,
@@ -20,6 +21,12 @@ async function getOrder(id: string, userId?: string) {
       province: orderTable.province,
       discount: orderTable.discount,
       paymentMethod: orderTable.paymentMethod,
+      currencyRateId: orderTable.currencyRateId,
+      totalInCurrency: orderTable.totalInCurrency,
+      currencyRate: {
+        currencyCode: currencyCacheTable.currencyCode,
+        rate: currencyCacheTable.rate,
+      },
       orderStatus: orderTable.orderStatus,
       orderNumber: orderTable.orderNumber,
       trackingNumber: orderTable.trackingNumber,
@@ -43,6 +50,10 @@ async function getOrder(id: string, userId?: string) {
     .from(orderTable)
     .leftJoin(userTable, eq(orderTable.customerId, userTable.id))
     .leftJoin(promotionTable, eq(orderTable.promotionId, promotionTable.id))
+    .leftJoin(
+      currencyCacheTable,
+      eq(orderTable.currencyRateId, currencyCacheTable.id),
+    )
     .where(eq(orderTable.id, id))
     .limit(1);
 

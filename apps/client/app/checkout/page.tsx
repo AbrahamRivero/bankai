@@ -18,6 +18,8 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import useCheckout from "@/hooks/mutations/use-checkout";
 import { useCart } from "@/lib/cart-context";
+import { convertPrice, formatPrice } from "@/lib/currency";
+import { useCurrencyStore } from "@/lib/currency-store";
 
 const DEFAULT_WORKSPACE_ID = process.env.NEXT_PUBLIC_DEFAULT_WORKSPACE_ID;
 
@@ -28,6 +30,8 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const { items, subtotal, clearCart } = useCart();
   const checkoutMutation = useCheckout();
+  const currency = useCurrencyStore((state) => state.currency);
+  const rates = useCurrencyStore((state) => state.rates);
   const router = useRouter();
 
   const [shippingAddress, setShippingAddress] = useState("");
@@ -37,6 +41,8 @@ export default function CheckoutPage() {
   const [notes, setNotes] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cup");
   const [promotionCode, setPromotionCode] = useState("");
+
+  const usdRate = rates["USD"];
 
   if (!user) {
     router.replace("/auth/sign-in");
@@ -51,6 +57,9 @@ export default function CheckoutPage() {
   const hasFreeShipping = subtotal >= 100;
   const shipping = hasFreeShipping ? 0 : 9.99;
   const total = subtotal + shipping;
+  const displaySubtotal = convertPrice(subtotal, rates, currency);
+  const displayShipping = convertPrice(shipping, rates, currency);
+  const displayTotal = convertPrice(total, rates, currency);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,7 +188,17 @@ export default function CheckoutPage() {
                       {item.title}
                       {item.size && ` (${item.size})`} x{item.quantity}
                     </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    <span>
+                      {formatPrice(
+                        convertPrice(
+                          item.price * item.quantity,
+                          rates,
+                          currency,
+                        ),
+                        currency,
+                      )}{" "}
+                      {currency}
+                    </span>
                   </div>
                 );
               })}
@@ -192,21 +211,33 @@ export default function CheckoutPage() {
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between text-muted-foreground">
                   <span>{t("itemsCount", { count: items.length })}</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>
+                    {formatPrice(displaySubtotal, currency)} {currency}
+                  </span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>{t("shippingLabel")}</span>
                   <span>
                     {hasFreeShipping
                       ? t("freeShipping")
-                      : `$${shipping.toFixed(2)}`}
+                      : `${formatPrice(displayShipping, currency)} ${currency}`}
                   </span>
                 </div>
+                {usdRate != null && (
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>{t("usd")}</span>
+                    <span>
+                      1 {t("usd")} = {formatPrice(usdRate, "CUP")} {t("cup")}
+                    </span>
+                  </div>
+                )}
               </div>
               <Separator />
               <div className="flex justify-between text-sm font-semibold">
                 <span>{t("orderTotal")}</span>
-                <span>${total.toFixed(2)}</span>
+                <span>
+                  {formatPrice(displayTotal, currency)} {currency}
+                </span>
               </div>
               <Button
                 type="submit"

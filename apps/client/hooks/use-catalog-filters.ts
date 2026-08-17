@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { convertPriceFrom } from "@/lib/currency";
+import { useCurrencyStore } from "@/lib/currency-store";
 import type { GetProductsParams } from "@/lib/fetchers/products";
 
 export type CatalogFilters = {
@@ -25,6 +27,8 @@ const PAGE_SIZE = 12;
 
 export function useCatalogFilters(workspaceId: string) {
   const storageKey = "bankai:catalog-filters";
+  const currency = useCurrencyStore((state) => state.currency);
+  const rates = useCurrencyStore((state) => state.rates);
 
   const [filters, setFilters] = useState<CatalogFilters>(DEFAULT_FILTERS);
   const [offset, setOffset] = useState(0);
@@ -86,12 +90,16 @@ export function useCatalogFilters(workspaceId: string) {
       ...(filters.searchterm && { searchterm: filters.searchterm }),
       ...(filters.gender && { gender: filters.gender }),
       ...(filters.sizes.length > 0 && { sizes: filters.sizes.join(",") }),
-      ...(filters.minPrice && { minPrice: Number(filters.minPrice) }),
-      ...(filters.maxPrice && { maxPrice: Number(filters.maxPrice) }),
+      ...(filters.minPrice && {
+        minPrice: convertPriceFrom(Number(filters.minPrice), rates, currency),
+      }),
+      ...(filters.maxPrice && {
+        maxPrice: convertPriceFrom(Number(filters.maxPrice), rates, currency),
+      }),
       ...(filters.sortBy && { sortBy: filters.sortBy }),
       ...(filters.availability && { availability: filters.availability }),
     };
-  }, [workspaceId, filters, offset]);
+  }, [workspaceId, filters, offset, currency, rates]);
 
   const handlePageChange = useCallback((page: number) => {
     setOffset((page - 1) * PAGE_SIZE);

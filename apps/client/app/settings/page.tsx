@@ -1,14 +1,16 @@
 "use client";
 
 import { supportedLocales } from "@i18n/resources";
-import { ChevronLeft, Info, Moon, Palette, Sun } from "lucide-react";
+import { ChevronLeft, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/components/providers/auth-provider/hooks/use-auth";
+import NotificationPreferencesSettings from "@/components/settings/notification-preferences-settings";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -18,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
+import { type DisplayCurrency, useCurrencyStore } from "@/lib/currency-store";
+import { cn } from "@/lib/utils";
 
 function getLocaleLabel(locale: string) {
   try {
@@ -44,7 +48,7 @@ function getLocaleLabel(locale: string) {
   }
 }
 
-const tabs = ["appearance", "language", "information"] as const;
+const CURRENCIES: DisplayCurrency[] = ["USD", "EUR", "CUP"];
 
 export default function SettingsPage() {
   const { t, i18n } = useTranslation("store");
@@ -52,7 +56,9 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeTab = searchParams.get("tab") || "appearance";
+  const activeTab = searchParams.get("tab") || "preferences";
+  const currency = useCurrencyStore((state) => state.currency);
+  const setCurrency = useCurrencyStore((state) => state.setCurrency);
 
   const setActiveTab = useCallback(
     (tab: string) => {
@@ -69,6 +75,12 @@ export default function SettingsPage() {
     [i18n],
   );
 
+  const themeLabels: Record<string, string> = {
+    light: t("themeLight"),
+    dark: t("themeDark"),
+    system: t("themeSystem"),
+  };
+
   const initials = user?.name
     ? user.name
         .split(" ")
@@ -76,6 +88,11 @@ export default function SettingsPage() {
         .join("")
         .toUpperCase()
     : user?.email?.substring(0, 2).toUpperCase() || "U";
+
+  const navItems = [
+    { value: "preferences", label: t("preferences"), icon: Settings },
+    { value: "account", label: t("account"), icon: User },
+  ];
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -99,37 +116,35 @@ export default function SettingsPage() {
 
       <div className="flex flex-1">
         <aside className="hidden w-64 flex-col border-r border-border/40 p-4 md:flex">
-          <div className="mb-6 flex flex-col items-center gap-3 pt-4">
-            <Avatar className="h-14 w-14">
+          <div className="mb-2 flex items-center gap-3 rounded-md px-2 py-2">
+            <Avatar className="h-9 w-9">
               <AvatarImage src={user?.image ?? ""} alt={user?.name || ""} />
               <AvatarFallback className="border border-border/30 text-xs font-medium">
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="text-center">
-              <p className="text-sm font-medium">{user?.name || "—"}</p>
-              <p className="text-xs text-muted-foreground">
+            <div className="flex min-w-0 flex-col">
+              <p className="truncate text-sm">{user?.name || "—"}</p>
+              <p className="truncate text-xs text-muted-foreground">
                 {user?.email || "—"}
               </p>
             </div>
           </div>
           <Separator />
           <nav className="mt-4 flex flex-col gap-1">
-            {tabs.map((tab) => (
+            {navItems.map((item) => (
               <button
-                key={tab}
+                key={item.value}
                 type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                  activeTab === tab
-                    ? "bg-accent font-medium text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-                }`}
+                onClick={() => setActiveTab(item.value)}
+                className={cn(
+                  "flex h-8 w-full items-center justify-start gap-2 rounded-lg px-2 text-[11px] font-normal text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+                  activeTab === item.value &&
+                    "bg-sidebar-accent text-sidebar-accent-foreground",
+                )}
               >
-                {tab === "appearance" && <Palette className="h-4 w-4" />}
-                {tab === "language" && <Sun className="h-4 w-4" />}
-                {tab === "information" && <Info className="h-4 w-4" />}
-                {t(tab)}
+                <item.icon className="h-4 w-4" />
+                <span>{item.label}</span>
               </button>
             ))}
           </nav>
@@ -145,145 +160,211 @@ export default function SettingsPage() {
             {t("back")}
           </button>
 
-          {activeTab === "appearance" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold">{t("appearance")}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("appearanceDescription")}
+          <div className="mb-8 flex gap-1 rounded-lg border border-border bg-background p-1 md:hidden">
+            {navItems.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setActiveTab(item.value)}
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors",
+                  activeTab === item.value
+                    ? "bg-accent font-medium text-accent-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === "preferences" && (
+            <div className="mx-auto max-w-4xl space-y-8">
+              <div className="space-y-2">
+                <h1 className="text-2xl font-semibold">{t("preferences")}</h1>
+                <p className="text-muted-foreground">
+                  {t("preferencesDescription")}
                 </p>
               </div>
 
-              <div className="space-y-4 rounded-lg border border-border p-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">{t("themeLabel")}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background p-1">
-                    <button
-                      type="button"
-                      aria-label={t("themeLight")}
-                      onClick={() => setTheme("light")}
-                      className={`rounded-md p-1.5 transition-colors ${
-                        theme === "light"
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Sun className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={t("themeDark")}
-                      onClick={() => setTheme("dark")}
-                      className={`rounded-md p-1.5 transition-colors ${
-                        theme === "dark"
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Moon className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={t("themeSystem")}
-                      onClick={() => setTheme("system")}
-                      className={`rounded-md p-1.5 transition-colors ${
-                        theme === "system"
-                          ? "bg-accent text-accent-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Sun className="h-4 w-4 opacity-50" />
-                    </button>
-                  </div>
+              <div className="space-y-6">
+                <div className="space-y-1">
+                  <h2 className="text-md font-medium">{t("appearance")}</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {t("appearanceDescription")}
+                  </p>
                 </div>
-              </div>
-            </div>
-          )}
 
-          {activeTab === "language" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold">{t("language")}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("languageDescription")}
-                </p>
-              </div>
-
-              <div className="space-y-4 rounded-lg border border-border p-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">{t("languageLabel")}</p>
-                  </div>
-                  <Select
-                    value={i18n.language}
-                    onValueChange={(value) =>
-                      value && handleLanguageChange(value)
-                    }
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder={t("languagePlaceholder")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {supportedLocales.map((locale) => (
-                        <SelectItem key={locale} value={locale}>
-                          {getLocaleLabel(locale)}
+                <div className="space-y-4 rounded-md border border-border bg-sidebar p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">
+                        {t("themeLabel")}
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        {t("themeDescription")}
+                      </p>
+                    </div>
+                    <Select
+                      value={theme}
+                      onValueChange={(value) => value && setTheme(value)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder={t("themeSystem")}>
+                          {themeLabels[theme ?? "system"]}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">{t("themeLight")}</SelectItem>
+                        <SelectItem value="dark">{t("themeDark")}</SelectItem>
+                        <SelectItem value="system">
+                          {t("themeSystem")}
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">
+                        {t("languageLabel")}
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        {t("languageDescription")}
+                      </p>
+                    </div>
+                    <Select
+                      value={i18n.language}
+                      onValueChange={(value) =>
+                        value && handleLanguageChange(value)
+                      }
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder={t("languagePlaceholder")}>
+                          {getLocaleLabel(i18n.language)}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {supportedLocales.map((locale) => (
+                          <SelectItem key={locale} value={locale}>
+                            {getLocaleLabel(locale)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">
+                        {t("currencyLabel")}
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        {t("currencyDescription")}
+                      </p>
+                    </div>
+                    <Select
+                      value={currency}
+                      onValueChange={(value) =>
+                        value && setCurrency(value as DisplayCurrency)
+                      }
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder={t("currencyPlaceholder")}>
+                          {currency}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CURRENCIES.map((code) => (
+                          <SelectItem key={code} value={code}>
+                            {code}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {activeTab === "information" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold">{t("information")}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("informationDescription")}
+          {activeTab === "account" && (
+            <div className="mx-auto max-w-4xl space-y-8">
+              <div className="space-y-2">
+                <h1 className="text-2xl font-semibold">{t("account")}</h1>
+                <p className="text-muted-foreground">
+                  {t("accountDescription")}
                 </p>
               </div>
 
-              <div className="space-y-4 rounded-lg border border-border p-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">{t("profilePicture")}</p>
-                  </div>
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src={user?.image ?? ""}
-                      alt={user?.name || ""}
-                    />
-                    <AvatarFallback className="border border-border/30 text-xs font-medium">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
+              <div className="space-y-6">
+                <div className="space-y-1">
+                  <h2 className="text-md font-medium">{t("information")}</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {t("informationDescription")}
+                  </p>
                 </div>
 
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">{t("nameLabel")}</p>
+                <div className="space-y-4 rounded-md border border-border bg-sidebar p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">
+                        {t("profilePicture")}
+                      </Label>
+                    </div>
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src={user?.image ?? ""}
+                        alt={user?.name || ""}
+                      />
+                      <AvatarFallback className="border border-border/30 text-xs font-medium">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
-                  <span className="text-sm text-muted-foreground">
-                    {user?.name || "—"}
-                  </span>
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">
+                        {t("nameLabel")}
+                      </Label>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {user?.name || "—"}
+                    </span>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">
+                        {t("emailLabel")}
+                      </Label>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {user?.email || "—"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-1">
+                  <h2 className="text-md font-medium">{t("notifications")}</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {t("notificationsDescription")}
+                  </p>
                 </div>
 
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">{t("emailLabel")}</p>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {user?.email || "—"}
-                  </span>
-                </div>
+                <NotificationPreferencesSettings />
               </div>
             </div>
           )}

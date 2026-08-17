@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter, Noto_Sans } from "next/font/google";
-
+import { CurrencyStoreProvider } from "@/components/currency-store-provider";
 import AuthProvider from "@/components/providers/auth-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
@@ -65,8 +65,10 @@ export default function RootLayout({
             <AuthProvider>
               <AppI18nProvider>
                 <CartProvider>
-                  <SiteHeader />
-                  {children}
+                  <CurrencyStoreProvider>
+                    <SiteHeader />
+                    {children}
+                  </CurrencyStoreProvider>
                 </CartProvider>
                 <ToastProvider />
               </AppI18nProvider>

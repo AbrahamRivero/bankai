@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import useGetOrders from "@/hooks/queries/use-get-orders";
+import { formatPrice } from "@/lib/currency";
 
 const DEFAULT_WORKSPACE_ID = process.env.NEXT_PUBLIC_DEFAULT_WORKSPACE_ID;
 const PAGE_SIZE = 10;
@@ -56,6 +57,12 @@ function getStatusLabel(status: string, t: (key: string) => string): string {
     cancelled: t("statusCancelled"),
   };
   return labels[status] ?? status;
+}
+
+function orderCurrency(paymentMethod: string): string {
+  if (paymentMethod === "usd") return "USD";
+  if (paymentMethod === "euro") return "EUR";
+  return "CUP";
 }
 
 export default function OrdersPage() {
@@ -296,7 +303,9 @@ export default function OrdersPage() {
                           {getStatusLabel(order.orderStatus, t)}
                         </Badge>
                         <p className="text-sm font-semibold">
-                          ${order.total.toFixed(2)}
+                          {order.totalInCurrency != null
+                            ? `${formatPrice(order.totalInCurrency, orderCurrency(order.paymentMethod))} ${orderCurrency(order.paymentMethod)}`
+                            : `$${order.total.toFixed(2)} ${t("usd")}`}
                         </p>
                       </div>
                     </div>

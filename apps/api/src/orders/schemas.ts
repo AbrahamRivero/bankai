@@ -24,6 +24,14 @@ export const orderResponseSchema = v.object({
   promotionId: v.nullable(v.string()),
   promotionDiscount: v.number(),
   paymentMethod: v.string(),
+  currencyRateId: v.nullable(v.string()),
+  totalInCurrency: v.nullable(v.number()),
+  currencyRate: v.optional(
+    v.object({
+      currencyCode: v.string(),
+      rate: v.number(),
+    }),
+  ),
   orderStatus: v.string(),
   orderNumber: v.string(),
   trackingNumber: v.string(),

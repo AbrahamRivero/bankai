@@ -9,6 +9,8 @@ import { useAuth } from "@/components/providers/auth-provider/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart-context";
+import { convertPrice, formatPrice } from "@/lib/currency";
+import { useCurrencyStore } from "@/lib/currency-store";
 
 export default function CartPage() {
   const { t } = useTranslation("store");
@@ -16,6 +18,8 @@ export default function CartPage() {
   const router = useRouter();
   const { items, removeItem, updateQuantity, clearCart, itemCount, subtotal } =
     useCart();
+  const currency = useCurrencyStore((state) => state.currency);
+  const rates = useCurrencyStore((state) => state.rates);
 
   if (!user) {
     router.replace("/auth/sign-in");
@@ -25,6 +29,9 @@ export default function CartPage() {
   const hasFreeShipping = subtotal >= 100;
   const shipping = hasFreeShipping ? 0 : 9.99;
   const total = subtotal + shipping;
+  const displaySubtotal = convertPrice(subtotal, rates, currency);
+  const displayShipping = convertPrice(shipping, rates, currency);
+  const displayTotal = convertPrice(total, rates, currency);
 
   if (items.length === 0) {
     return (
@@ -128,7 +135,14 @@ export default function CartPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-semibold">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatPrice(
+                          convertPrice(
+                            item.price * item.quantity,
+                            rates,
+                            currency,
+                          ),
+                          currency,
+                        )}
                       </span>
                       <button
                         type="button"
@@ -152,20 +166,25 @@ export default function CartPage() {
             <div className="space-y-1.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>{t("itemsCount", { count: itemCount })}</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>
+                  {formatPrice(displaySubtotal, currency)} {currency}
+                </span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>{t("shippingLabel")}</span>
                 <span>
                   {hasFreeShipping
                     ? t("freeShipping")
-                    : `$${shipping.toFixed(2)}`}
+                    : `${formatPrice(displayShipping, currency)} ${currency}`}
                 </span>
               </div>
               {!hasFreeShipping && subtotal > 0 && (
                 <p className="text-xs text-muted-foreground">
                   {t("freeShippingHint", {
-                    amount: (100 - subtotal).toFixed(2),
+                    amount: formatPrice(
+                      convertPrice(100 - subtotal, rates, currency),
+                      currency,
+                    ),
                   })}
                 </p>
               )}
@@ -173,7 +192,9 @@ export default function CartPage() {
             <Separator />
             <div className="flex justify-between text-sm font-semibold">
               <span>{t("total")}</span>
-              <span>${total.toFixed(2)}</span>
+              <span>
+                {formatPrice(displayTotal, currency)} {currency}
+              </span>
             </div>
             <Button
               className="w-full"

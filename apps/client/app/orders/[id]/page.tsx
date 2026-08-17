@@ -20,6 +20,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import useCancelOrder from "@/hooks/mutations/use-cancel-order";
 import useGetOrder from "@/hooks/queries/use-get-order";
+import { formatPrice } from "@/lib/currency";
 
 const DEFAULT_WORKSPACE_ID = process.env.NEXT_PUBLIC_DEFAULT_WORKSPACE_ID;
 
@@ -109,6 +110,12 @@ function Timeline({ currentStatus }: { currentStatus: string }) {
 
 function money(amount: number): string {
   return `$${amount.toFixed(2)}`;
+}
+
+function orderCurrency(paymentMethod: string): string {
+  if (paymentMethod === "usd") return "USD";
+  if (paymentMethod === "euro") return "EUR";
+  return "CUP";
 }
 
 export default function OrderDetailPage() {
@@ -355,10 +362,37 @@ export default function OrderDetailPage() {
               </div>
               <div className="flex items-center justify-between pt-4">
                 <span className="font-semibold">{t("subtotal")}</span>
-                <span className="text-lg font-bold text-primary">
-                  {money(order.total)}
-                </span>
+                <div className="flex flex-col items-end gap-0.5">
+                  {order.totalInCurrency != null ? (
+                    <>
+                      <span className="text-lg font-bold text-primary">
+                        {formatPrice(
+                          order.totalInCurrency,
+                          orderCurrency(order.paymentMethod),
+                        )}{" "}
+                        {orderCurrency(order.paymentMethod)}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        ≈ {money(order.total)} {t("usd")}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-lg font-bold text-primary">
+                      {money(order.total)} {t("usd")}
+                    </span>
+                  )}
+                </div>
               </div>
+              {order.currencyRate?.rate != null &&
+                order.currencyRate?.currencyCode != null && (
+                  <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
+                    <span>{t("exchangeRate")}</span>
+                    <span>
+                      1 {order.currencyRate.currencyCode} ={" "}
+                      {formatPrice(order.currencyRate.rate, "CUP")} {t("cup")}
+                    </span>
+                  </div>
+                )}
             </div>
 
             <div className="rounded-xl border border-border p-4">

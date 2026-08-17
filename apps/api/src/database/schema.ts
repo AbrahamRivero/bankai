@@ -1055,6 +1055,11 @@ export const orderTable = pgTable(
       .default(0)
       .notNull(),
     paymentMethod: text("payment_method").default("cup").notNull(),
+    currencyRateId: text("currency_rate_id").references(
+      () => currencyCacheTable.id,
+      { onDelete: "set null" },
+    ),
+    totalInCurrency: doublePrecision("total_in_currency"),
     orderStatus: text("order_status").default("pending").notNull(),
     orderNumber: text("order_number").notNull().unique(),
     trackingNumber: text("tracking_number").notNull().unique(),
@@ -1165,16 +1170,26 @@ export const promotionProductTable = pgTable(
   ],
 );
 
-export const currencyCacheTable = pgTable("currency_cache", {
-  id: text("id")
-    .$defaultFn(() => createId())
-    .primaryKey(),
-  currencyCode: text("currency_code").notNull(),
-  rate: doublePrecision("rate").notNull(),
-  provider: text("provider").notNull(),
-  lastUpdated: timestamp("last_updated", { mode: "date" }).notNull(),
-  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
-});
+export const currencyCacheTable = pgTable(
+  "currency_cache",
+  {
+    id: text("id")
+      .$defaultFn(() => createId())
+      .primaryKey(),
+    currencyCode: text("currency_code").notNull(),
+    rate: doublePrecision("rate").notNull(),
+    provider: text("provider").notNull(),
+    lastUpdated: timestamp("last_updated", { mode: "date" }).notNull(),
+    expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+  },
+  (table) => [
+    index("currency_cache_currencyCode_idx").on(table.currencyCode),
+    uniqueIndex("currency_cache_code_day_idx").on(
+      table.currencyCode,
+      sql`date(${table.lastUpdated})`,
+    ),
+  ],
+);
 
 // Auth-schema compatible aliases in schema.ts
 export const user = userTable;

@@ -43,6 +43,9 @@ export type OrderResponse = {
   promotionDiscount: number;
   promotion: { code: string; title: string } | null;
   paymentMethod: string;
+  currencyRateId: string | null;
+  totalInCurrency: number | null;
+  currencyRate: { currencyCode: string | null; rate: number | null } | null;
   orderStatus: string;
   orderNumber: string;
   trackingNumber: string;

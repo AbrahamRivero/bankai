@@ -1,7 +1,8 @@
-import { eq, inArray, sql } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import db from "../../database";
 import {
+  currencyCacheTable,
   orderItemTable,
   orderTable,
   productTable,
@@ -52,6 +53,23 @@ type CheckoutInput = {
   userId: string;
   workspaceId: string;
 };
+
+const CURRENCY_BY_PAYMENT_METHOD: Record<string, string> = {
+  usd: "USD",
+  euro: "EUR",
+  cup: "CUP",
+  card: "CUP",
+};
+
+async function getLatestRate(currencyCode: string) {
+  const [row] = await db
+    .select()
+    .from(currencyCacheTable)
+    .where(eq(currencyCacheTable.currencyCode, currencyCode))
+    .orderBy(desc(currencyCacheTable.lastUpdated))
+    .limit(1);
+  return row ?? null;
+}
 
 async function checkout(input: CheckoutInput) {
   const {
@@ -122,6 +140,32 @@ async function checkout(input: CheckoutInput) {
 
   const total = Math.max(0, subtotal + shipping - promotionDiscount);
 
+  const paymentMethodValue = paymentMethod ?? "cup";
+  const currencyCode = CURRENCY_BY_PAYMENT_METHOD[paymentMethodValue] ?? "CUP";
+
+  const rateUsd = await getLatestRate("USD");
+  if (!rateUsd) {
+    throw new HTTPException(503, {
+      message: "Currency rates unavailable, try again later",
+    });
+  }
+
+  let currencyRateId = rateUsd.id;
+  let totalInCurrency = total;
+
+  if (currencyCode === "CUP") {
+    totalInCurrency = total * rateUsd.rate;
+  } else if (currencyCode === "EUR") {
+    const rateEur = await getLatestRate("EUR");
+    if (!rateEur) {
+      throw new HTTPException(503, {
+        message: "Currency rates unavailable, try again later",
+      });
+    }
+    currencyRateId = rateEur.id;
+    totalInCurrency = (total * rateUsd.rate) / rateEur.rate;
+  }
+
   const orderNumber = await generateUniqueNumber("ORD");
   const trackingNumber = await generateUniqueNumber("TRK");
 
@@ -143,7 +187,9 @@ async function checkout(input: CheckoutInput) {
       promotionId,
       total,
       orderStatus: "pending",
-      paymentMethod: paymentMethod ?? "cup",
+      paymentMethod: paymentMethodValue,
+      currencyRateId,
+      totalInCurrency,
     })
     .returning();
 
