@@ -2,11 +2,10 @@ import { sql } from "drizzle-orm";
 import db from "../database";
 import { currencyCacheTable } from "../database/schema";
 
-const EL_TOQUE_URL = "https://api.eltoque.com/v1/rates";
+const EL_TOQUE_URL = "https://tasas.eltoque.com/v1/trmi";
 
-type ElToqueRate = {
-  rate: number;
-  provider: string;
+type ElToqueResponse = {
+  tasas: Record<string, number>;
 };
 
 export type SyncCurrencyRatesResult = {
@@ -14,6 +13,11 @@ export type SyncCurrencyRatesResult = {
   inserted: number;
   reason?: string;
 };
+
+function buildElToqueUrl(date: Date): string {
+  const formatted = date.toISOString().slice(0, 10);
+  return `${EL_TOQUE_URL}?date_from=${formatted}%2000%3A00%3A01&date_to=${formatted}%2023%3A59%3A01`;
+}
 
 export async function hasCurrencyRatesForToday(): Promise<boolean> {
   const now = new Date();
@@ -26,9 +30,19 @@ export async function hasCurrencyRatesForToday(): Promise<boolean> {
 }
 
 export async function syncCurrencyRates(): Promise<SyncCurrencyRatesResult> {
+  const apiKey = process.env.ELTOQUE_API_KEY;
+  if (!apiKey) {
+    return { synced: false, inserted: 0, reason: "missing_api_key" };
+  }
+
+  const now = new Date();
+
   let response: Response;
   try {
-    response = await fetch(EL_TOQUE_URL, {
+    response = await fetch(buildElToqueUrl(now), {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
       signal: AbortSignal.timeout(5000),
     });
   } catch {
@@ -39,24 +53,25 @@ export async function syncCurrencyRates(): Promise<SyncCurrencyRatesResult> {
     return { synced: false, inserted: 0, reason: `http_${response.status}` };
   }
 
-  const data = (await response.json()) as Record<string, ElToqueRate>;
-  const now = new Date();
+  const data = (await response.json()) as ElToqueResponse;
 
   let inserted = 0;
-  for (const [code, info] of Object.entries(data)) {
+  for (const [code, rate] of Object.entries(data.tasas)) {
+    const currencyCode = code === "ECU" ? "EUR" : code;
+
     const [existing] = await db
       .select({ id: currencyCacheTable.id })
       .from(currencyCacheTable)
       .where(
-        sql`${currencyCacheTable.currencyCode} = ${code} AND date(${currencyCacheTable.lastUpdated}) = date(${now})`,
+        sql`${currencyCacheTable.currencyCode} = ${currencyCode} AND date(${currencyCacheTable.lastUpdated}) = date(${now})`,
       )
       .limit(1);
     if (existing) continue;
 
     await db.insert(currencyCacheTable).values({
-      currencyCode: code,
-      rate: info.rate,
-      provider: info.provider,
+      currencyCode,
+      rate,
+      provider: "eltoque",
       lastUpdated: now,
       expiresAt: new Date(now.getTime() + 24 * 60 * 60 * 1000),
     });
