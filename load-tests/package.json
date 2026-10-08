@@ -18,8 +18,8 @@
     "smoke:all": "node scripts/smoke.mjs api-public && node scripts/smoke.mjs api-auth && node scripts/smoke.mjs client && node scripts/smoke.mjs ws"
   },
   "devDependencies": {
-    "artillery": "^2.0.33",
+    "artillery": "^2.0.34",
     "bcrypt": "^6.0.0",
-    "pg": "^8.20.0"
+    "pg": "^8.23.1"
   }
 }
